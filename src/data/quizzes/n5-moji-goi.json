@@ -1,0 +1,266 @@
+[
+  {
+    "id": 1,
+    "section": "problem-1",
+    "type": "image",
+    "prompt": "Answer from the original quiz image.",
+    "image": "/questions/n5-moji-goi/q01.png",
+    "answer": 2
+  },
+  {
+    "id": 2,
+    "section": "problem-1",
+    "type": "image",
+    "prompt": "Answer from the original quiz image.",
+    "image": "/questions/n5-moji-goi/q02.png",
+    "answer": 4
+  },
+  {
+    "id": 3,
+    "section": "problem-1",
+    "type": "image",
+    "prompt": "Answer from the original quiz image.",
+    "image": "/questions/n5-moji-goi/q03.PNG",
+    "answer": 1
+  },
+  {
+    "id": 4,
+    "section": "problem-1",
+    "type": "image",
+    "prompt": "Answer from the original quiz image.",
+    "image": "/questions/n5-moji-goi/q04.PNG",
+    "answer": 2
+  },
+  {
+    "id": 5,
+    "section": "problem-1",
+    "type": "image",
+    "prompt": "Answer from the original quiz image.",
+    "image": "/questions/n5-moji-goi/q05.PNG",
+    "answer": 2
+  },
+  {
+    "id": 6,
+    "section": "problem-1",
+    "type": "image",
+    "prompt": "Answer from the original quiz image.",
+    "image": "/questions/n5-moji-goi/q06.PNG",
+    "answer": 3
+  },
+  {
+    "id": 7,
+    "section": "problem-1",
+    "type": "image",
+    "prompt": "Answer from the original quiz image.",
+    "image": "/questions/n5-moji-goi/q07.PNG",
+    "answer": 4
+  },
+  {
+    "id": 8,
+    "section": "problem-1",
+    "type": "image",
+    "prompt": "Answer from the original quiz image.",
+    "image": "/questions/n5-moji-goi/q08.PNG",
+    "answer": 2
+  },
+  {
+    "id": 9,
+    "section": "problem-1",
+    "type": "image",
+    "prompt": "Answer from the original quiz image.",
+    "image": "/questions/n5-moji-goi/q09.PNG",
+    "answer": 2
+  },
+  {
+    "id": 10,
+    "section": "problem-1",
+    "type": "image",
+    "prompt": "Answer from the original quiz image.",
+    "image": "/questions/n5-moji-goi/q10.PNG",
+    "answer": 3
+  },
+  {
+    "id": 11,
+    "section": "problem-2",
+    "type": "image",
+    "prompt": "＿＿ の ことばは どう かきますか。",
+    "image": "/questions/n5-moji-goi/q11.PNG",
+    "answer": 1
+  },
+  {
+    "id": 12,
+    "section": "problem-2",
+    "type": "image",
+    "prompt": "＿＿ の ことばは どう かきますか。",
+    "image": "/questions/n5-moji-goi/q12.PNG",
+    "answer": 2
+  },
+  {
+    "id": 13,
+    "section": "problem-2",
+    "type": "image",
+    "prompt": "＿＿ の ことばは どう かきますか。",
+    "image": "/questions/n5-moji-goi/q13.PNG",
+    "answer": 3
+  },
+  {
+    "id": 14,
+    "section": "problem-2",
+    "type": "image",
+    "prompt": "＿＿ の ことばは どう かきますか。",
+    "image": "/questions/n5-moji-goi/q14.PNG",
+    "answer": 4
+  },
+  {
+    "id": 15,
+    "section": "problem-2",
+    "type": "image",
+    "prompt": "＿＿ の ことばは どう かきますか。",
+    "image": "/questions/n5-moji-goi/q15.PNG",
+    "answer": 4
+  },
+  {
+    "id": 16,
+    "section": "problem-2",
+    "type": "image",
+    "prompt": "＿＿ の ことばは どう かきますか。",
+    "image": "/questions/n5-moji-goi/q16.PNG",
+    "answer": 1
+  },
+  {
+    "id": 17,
+    "section": "problem-2",
+    "type": "image",
+    "prompt": "＿＿ の ことばは どう かきますか。",
+    "image": "/questions/n5-moji-goi/q17.PNG",
+    "answer": 3
+  },
+  {
+    "id": 18,
+    "section": "problem-2",
+    "type": "image",
+    "prompt": "＿＿ の ことばは どう かきますか。",
+    "image": "/questions/n5-moji-goi/q18.PNG",
+    "answer": 1
+  },
+  {
+    "id": 19,
+    "section": "problem-3",
+    "type": "image",
+    "prompt": "Answer from the original quiz image.",
+    "image": "/questions/n5-moji-goi/q19.PNG",
+    "answer": 4
+  },
+  {
+    "id": 20,
+    "section": "problem-3",
+    "type": "image",
+    "prompt": "Answer from the original quiz image.",
+    "image": "/questions/n5-moji-goi/q20.PNG",
+    "answer": 3
+  },
+  {
+    "id": 21,
+    "section": "problem-3",
+    "type": "image",
+    "prompt": "Answer from the original quiz image.",
+    "image": "/questions/n5-moji-goi/q21.PNG",
+    "answer": 1
+  },
+  {
+    "id": 22,
+    "section": "problem-3",
+    "type": "image",
+    "prompt": "Answer from the original quiz image.",
+    "image": "/questions/n5-moji-goi/q22.PNG",
+    "answer": 1
+  },
+  {
+    "id": 23,
+    "section": "problem-3",
+    "type": "image",
+    "prompt": "Answer from the original quiz image.",
+    "image": "/questions/n5-moji-goi/q23.PNG",
+    "answer": 3
+  },
+  {
+    "id": 24,
+    "section": "problem-3",
+    "type": "image",
+    "prompt": "Answer from the original quiz image.",
+    "image": "/questions/n5-moji-goi/q24.PNG",
+    "answer": 2
+  },
+  {
+    "id": 25,
+    "section": "problem-3",
+    "type": "image",
+    "prompt": "Answer from the original quiz image.",
+    "image": "/questions/n5-moji-goi/q25.PNG",
+    "answer": 1
+  },
+  {
+    "id": 26,
+    "section": "problem-3",
+    "type": "image",
+    "prompt": "Answer from the original quiz image.",
+    "image": "/questions/n5-moji-goi/q26.PNG",
+    "answer": 4
+  },
+  {
+    "id": 27,
+    "section": "problem-3",
+    "type": "image",
+    "prompt": "Answer from the original quiz image.",
+    "image": "/questions/n5-moji-goi/q27.PNG",
+    "answer": 2
+  },
+  {
+    "id": 28,
+    "section": "problem-3",
+    "type": "image",
+    "prompt": "Answer from the original quiz image.",
+    "image": "/questions/n5-moji-goi/q28.PNG",
+    "answer": 4
+  },
+  {
+    "id": 29,
+    "section": "problem-4",
+    "type": "image",
+    "prompt": "Answer from the original quiz image.",
+    "image": "/questions/n5-moji-goi/q29.PNG",
+    "answer": 3
+  },
+  {
+    "id": 30,
+    "section": "problem-4",
+    "type": "image",
+    "prompt": "Answer from the original quiz image.",
+    "image": "/questions/n5-moji-goi/q30.PNG",
+    "answer": 1
+  },
+  {
+    "id": 31,
+    "section": "problem-4",
+    "type": "image",
+    "prompt": "Answer from the original quiz image.",
+    "image": "/questions/n5-moji-goi/q31.PNG",
+    "answer": 2
+  },
+  {
+    "id": 32,
+    "section": "problem-4",
+    "type": "image",
+    "prompt": "Answer from the original quiz image.",
+    "image": "/questions/n5-moji-goi/q32.PNG",
+    "answer": 3
+  },
+  {
+    "id": 33,
+    "section": "problem-4",
+    "type": "image",
+    "prompt": "Answer from the original quiz image.",
+    "image": "/questions/n5-moji-goi/q33.PNG",
+    "answer": 4
+  }
+]
