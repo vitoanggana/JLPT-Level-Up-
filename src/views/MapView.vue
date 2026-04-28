@@ -9,6 +9,16 @@ import { useProgressStore } from '../stores/progress'
 const router = useRouter()
 const progressStore = useProgressStore()
 const previewIslandId = ref(progressStore.progress.selectedLevel ?? 'n5')
+const mapViewport = ref(null)
+const isDragging = ref(false)
+const dragMoved = ref(false)
+const suppressClick = ref(false)
+
+const dragState = {
+  pointerId: null,
+  startX: 0,
+  startY: 0,
+}
 
 const previewIsland = computed(() => {
   return jlptLevels.find((level) => level.id === previewIslandId.value) ?? jlptLevels[0]
@@ -38,6 +48,11 @@ function handleHover(levelId) {
 }
 
 function openIsland(levelId) {
+  if (suppressClick.value) {
+    suppressClick.value = false
+    return
+  }
+
   if (!progressStore.isUnlocked(levelId)) {
     return
   }
@@ -45,6 +60,61 @@ function openIsland(levelId) {
   progressStore.selectLevel(levelId)
   router.push(`/island/${levelId}`)
 }
+
+function syncHoverFromPoint(clientX, clientY) {
+  const hoveredElement = document.elementFromPoint(clientX, clientY)
+  const hoveredRegion = hoveredElement?.closest?.('[data-level-id]')
+
+  if (hoveredRegion?.dataset?.levelId) {
+    handleHover(hoveredRegion.dataset.levelId)
+  }
+}
+
+function handlePointerDown(event) {
+  if (event.button != null && event.button !== 0) {
+    return
+  }
+
+  isDragging.value = true
+  dragMoved.value = false
+  dragState.pointerId = event.pointerId
+  dragState.startX = event.clientX
+  dragState.startY = event.clientY
+
+  event.currentTarget.setPointerCapture?.(event.pointerId)
+  syncHoverFromPoint(event.clientX, event.clientY)
+}
+
+function handlePointerMove(event) {
+  if (!isDragging.value || dragState.pointerId !== event.pointerId) {
+    return
+  }
+
+  const deltaX = event.clientX - dragState.startX
+  const deltaY = event.clientY - dragState.startY
+
+  if (!dragMoved.value && (Math.abs(deltaX) > 4 || Math.abs(deltaY) > 4)) {
+    dragMoved.value = true
+  }
+
+  syncHoverFromPoint(event.clientX, event.clientY)
+}
+
+function finishDrag(event) {
+  if (dragState.pointerId != null && event?.currentTarget) {
+    event.currentTarget.releasePointerCapture?.(dragState.pointerId)
+  }
+
+  isDragging.value = false
+  if (dragMoved.value) {
+    suppressClick.value = true
+    window.setTimeout(() => {
+      suppressClick.value = false
+    }, 0)
+  }
+  dragState.pointerId = null
+}
+
 </script>
 
 <template>
@@ -52,43 +122,56 @@ function openIsland(levelId) {
     <section class="map-screen">
       <div class="map-stage">
         <div class="map-canvas">
-          <svg
-            class="japan-map-svg"
-            viewBox="0 0 1040 640"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            aria-label="JLPT Japan map"
+          <div
+            ref="mapViewport"
+            class="map-viewport"
+            :class="{ 'map-viewport--dragging': isDragging }"
+            @pointerdown="handlePointerDown"
+            @pointermove="handlePointerMove"
+            @pointerup="finishDrag"
+            @pointercancel="finishDrag"
+            @pointerleave="finishDrag"
           >
-            <g
-              v-for="island in jlptLevels"
-              :key="island.id"
-              class="map-region"
-              :class="[
-                `map-region--${getIslandStatus(island.id)}`,
-                { 'map-region--active': previewIsland.id === island.id },
-              ]"
-              @mouseenter="handleHover(island.id)"
-              @focusin="handleHover(island.id)"
-              @click="openIsland(island.id)"
+            <svg
+              class="japan-map-svg"
+              viewBox="0 0 1240 860"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              aria-label="JLPT Japan map"
             >
-              <path
-                class="map-region__shape"
-                :d="island.mapRegion.path"
-                :fill="island.themeColor"
-              />
-              <text
-                class="map-region__label"
-                :x="island.mapRegion.labelX"
-                :y="island.mapRegion.labelY"
+              <g
+                v-for="island in jlptLevels"
+                :key="island.id"
+                class="map-region"
+                :class="[
+                  `map-region--${getIslandStatus(island.id)}`,
+                  { 'map-region--active': previewIsland.id === island.id },
+                ]"
+                :data-level-id="island.id"
+                :transform="`translate(${island.mapRegion.translateX || 0} ${island.mapRegion.translateY || 0})`"
+                @mouseenter="handleHover(island.id)"
+                @focusin="handleHover(island.id)"
+                @click="openIsland(island.id)"
               >
-                {{ island.label }}
-              </text>
-            </g>
-          </svg>
+                <path
+                  class="map-region__shape"
+                  :d="island.mapRegion.path"
+                  :fill="island.themeColor"
+                />
+                <text
+                  class="map-region__label"
+                  :x="island.mapRegion.labelX"
+                  :y="island.mapRegion.labelY"
+                >
+                  {{ island.label }}
+                </text>
+              </g>
+            </svg>
+          </div>
         </div>
 
         <div class="map-floating-card">
-          <p class="eyebrow">Map Preview</p>
+          <p class="eyebrow">Pratinjau Peta</p>
           <h2 class="map-floating-card__title">{{ previewIsland.label }}</h2>
           <p class="small-note" style="margin-top: 4px;">{{ previewIsland.name }}</p>
           <p class="small-note">{{ previewIsland.statusLabel }}</p>
@@ -98,7 +181,7 @@ function openIsland(levelId) {
           </div>
 
           <p class="small-note">
-            {{ previewCompletedCount }} / {{ previewIsland.categories.length }} category selesai
+            {{ previewCompletedCount }} / {{ previewIsland.categories.length }} kategori selesai
           </p>
 
           <div class="button-row" style="margin-top: 16px;">
@@ -108,10 +191,10 @@ function openIsland(levelId) {
               :disabled="!progressStore.isUnlocked(previewIsland.id)"
               @click="openIsland(previewIsland.id)"
             >
-              Enter Island
+              Masuk Pulau
             </button>
             <span class="badge">
-              {{ progressStore.isUnlocked(previewIsland.id) ? 'Unlocked' : 'Locked' }}
+              {{ progressStore.isUnlocked(previewIsland.id) ? 'Terbuka' : 'Terkunci' }}
             </span>
           </div>
         </div>
@@ -119,9 +202,9 @@ function openIsland(levelId) {
 
       <div class="map-footer">
         <div class="map-footer__meta">
-          <span class="badge">{{ progressStore.totalUnlocked }} unlocked</span>
-          <span class="badge">{{ progressStore.totalCompleted }} cleared</span>
-          <span class="badge">Click any unlocked island to enter</span>
+          <span class="badge">{{ progressStore.totalUnlocked }} terbuka</span>
+          <span class="badge">{{ progressStore.totalCompleted }} tuntas</span>
+          <span class="badge">Klik pulau yang terbuka untuk masuk</span>
         </div>
 
         <div class="map-footer__categories">

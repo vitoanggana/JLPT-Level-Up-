@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 import AppShell from '../components/AppShell.vue'
+import { getQuizDefinition } from '../data/quizzes'
 import { jlptLevels } from '../data/levels'
 import { useProgressStore } from '../stores/progress'
 
@@ -24,22 +25,42 @@ const completedCount = computed(() => {
   return island.value?.categories.filter((category) => categoryStateMap.value[category.id]?.completed).length ?? 0
 })
 
-const coreCategoryIds = ['moji-goi', 'bunpou-dokkai', 'choukai']
+const islandNodes = computed(() => {
+  return (island.value?.categories ?? []).map((category) => ({
+    ...category,
+    top: category.islandNode?.top || '50%',
+    left: category.islandNode?.left || '50%',
+  }))
+})
 
-const coreComplete = computed(() => {
-  return coreCategoryIds.every((categoryId) => categoryStateMap.value[categoryId]?.completed)
+const routePath = computed(() => {
+  const orderedIds = ['moji-goi', 'bunpou-dokkai', 'choukai', 'exam']
+  const orderedNodes = orderedIds
+    .map((categoryId) => islandNodes.value.find((category) => category.id === categoryId))
+    .filter(Boolean)
+
+  if (!orderedNodes.length) {
+    return ''
+  }
+
+  const points = orderedNodes.map((node) => ({
+    x: Number.parseFloat(node.left),
+    y: Number.parseFloat(node.top),
+  }))
+
+  return points.reduce((path, point, index) => {
+    if (index === 0) {
+      return `M ${point.x} ${point.y}`
+    }
+
+    const previous = points[index - 1]
+    const midX = (previous.x + point.x) / 2
+    return `${path} C ${midX} ${previous.y}, ${midX} ${point.y}, ${point.x} ${point.y}`
+  }, '')
 })
 
 function canPlayCategory(categoryId) {
-  if (!progressStore.isUnlocked(route.params.levelId)) {
-    return false
-  }
-
-  if (categoryId !== 'exam') {
-    return true
-  }
-
-  return coreComplete.value
+  return progressStore.canAccessCategory(route.params.levelId, categoryId)
 }
 
 function categoryStatus(categoryId) {
@@ -59,7 +80,7 @@ function completeCategory(categoryId) {
     return
   }
 
-  if (route.params.levelId === 'n5' && categoryId === 'moji-goi') {
+  if (getQuizDefinition(route.params.levelId, categoryId)) {
     router.push(`/quiz/${route.params.levelId}/${categoryId}`)
     return
   }
@@ -75,20 +96,18 @@ function completeCategory(categoryId) {
         <div class="island-map-panel">
           <div class="island-map-fill" :style="{ background: island.themeColor }">
             <svg
-              class="island-map-shape"
-              viewBox="0 0 1020 780"
+              class="island-route-map"
+              viewBox="0 0 100 100"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
               aria-hidden="true"
             >
-              <path :d="island.islandSilhouette || island.mapRegion.path" fill="currentColor" />
+              <path class="island-route-map__back" :d="routePath" pathLength="100" />
+              <path class="island-route-map__front" :d="routePath" pathLength="100" />
             </svg>
 
-            <div class="island-route island-route--one"></div>
-            <div class="island-route island-route--two"></div>
-
             <button
-              v-for="category in island.categories"
+              v-for="category in islandNodes"
               :key="category.id"
               class="island-node-card"
               :class="[
@@ -104,7 +123,7 @@ function completeCategory(categoryId) {
             >
               <span class="island-node-card__label">{{ category.title }}</span>
               <span class="island-node-card__count">
-                {{ categoryStatus(category.id) === 'done' ? 'Done' : `${category.questions}` }}
+                {{ categoryStatus(category.id) === 'done' ? 'Selesai' : `${category.questions}` }}
               </span>
             </button>
 
@@ -113,14 +132,14 @@ function completeCategory(categoryId) {
         </div>
 
         <div class="island-side-card">
-          <p class="eyebrow">Island Overview</p>
-          <h1 class="title" style="font-size: 40px;">{{ island.label }} Island</h1>
+          <p class="eyebrow">Ringkasan Pulau</p>
+          <h1 class="title" style="font-size: 40px;">Pulau {{ island.label }}</h1>
           <p class="small-note">{{ island.name }}</p>
 
           <div class="progress-bar" style="margin-top: 16px;">
             <span :style="{ width: `${islandMastery}%` }" />
           </div>
-          <p class="small-note">{{ completedCount }} / {{ island.categories.length }} stage clear</p>
+          <p class="small-note">{{ completedCount }} / {{ island.categories.length }} tahap selesai</p>
 
           <div class="milestone-list" style="margin-top: 18px;">
             <div v-for="milestone in island.milestones" :key="milestone">
@@ -128,9 +147,15 @@ function completeCategory(categoryId) {
             </div>
           </div>
 
+          <div class="milestone-list" style="margin-top: 18px;">
+            <div v-for="category in island.categories" :key="`${category.id}-requirement`">
+              {{ category.title }}: minimum {{ category.passingCorrect }}/{{ category.questions }} benar
+            </div>
+          </div>
+
           <div class="button-row" style="margin-top: 20px;">
             <button class="btn btn-secondary" type="button" @click="router.push('/map')">
-              Back to Map
+              Kembali ke Peta
             </button>
           </div>
         </div>

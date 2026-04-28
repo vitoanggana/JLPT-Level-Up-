@@ -1,4 +1,5 @@
 import n5MojiGoiBank from './n5-moji-goi.json'
+import n5BunpouDokkaiBank from './n5-bunpou-dokkai.json'
 
 function shuffle(array) {
   const clone = [...array]
@@ -15,9 +16,22 @@ export function getQuizDefinition(levelId, categoryId) {
   if (levelId === 'n5' && categoryId === 'moji-goi') {
     return {
       title: 'N5 Moji Goi',
-      subtitle: 'Random 20 questions from the 33-question practice bank.',
+      subtitle: '20 soal acak dari bank latihan berisi 33 soal.',
       questionCount: 20,
       questions: shuffle(n5MojiGoiBank).slice(0, 20),
+    }
+  }
+
+  if (levelId === 'n5' && categoryId === 'bunpou-dokkai') {
+    const randomPool = n5BunpouDokkaiBank.filter((question) => question.number <= 21)
+    const fixedQuestions = n5BunpouDokkaiBank.filter((question) => question.number >= 22)
+    const randomQuestions = shuffle(randomPool).slice(0, 19)
+
+    return {
+      title: 'N5 Bunpou Dokkai',
+      subtitle: '19 soal acak dari q01-q21 ditambah semua soal tetap dari q22-q32.',
+      questionCount: 30,
+      questions: [...randomQuestions, ...fixedQuestions],
     }
   }
 

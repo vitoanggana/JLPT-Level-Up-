@@ -9,15 +9,20 @@ function cloneStarterProgress() {
   return JSON.parse(JSON.stringify(starterProgress))
 }
 
+function createEmptyCategoryState() {
+  return {
+    completed: false,
+    score: 0,
+    correctCount: 0,
+  }
+}
+
 function createEmptyLevelScore(levelId) {
   const level = jlptLevels.find((item) => item.id === levelId)
   const categories = {}
 
   for (const category of level?.categories ?? []) {
-    categories[category.id] = {
-      completed: false,
-      score: 0,
-    }
+    categories[category.id] = createEmptyCategoryState()
   }
 
   return {
@@ -101,15 +106,38 @@ export const useProgressStore = defineStore('progress', () => {
     return progress.value.levelScores[levelId]?.mastery ?? 0
   }
 
-  function completeCategory(levelId, categoryId, score = 80) {
+  function getCategoryConfig(levelId, categoryId) {
+    return jlptLevels.find((level) => level.id === levelId)?.categories.find((category) => category.id === categoryId) ?? null
+  }
+
+  function isCategoryCompleted(levelId, categoryId) {
+    return Boolean(progress.value.levelScores[levelId]?.categories?.[categoryId]?.completed)
+  }
+
+  function canAccessCategory(levelId, categoryId) {
+    if (!isUnlocked(levelId)) {
+      return false
+    }
+
+    const category = getCategoryConfig(levelId, categoryId)
+    const unlockAfter = category?.unlockAfter ?? []
+
+    return unlockAfter.every((requiredCategoryId) => isCategoryCompleted(levelId, requiredCategoryId))
+  }
+
+  function completeCategory(levelId, categoryId, score = 80, correctCount = 0) {
     const levelScore = progress.value.levelScores[levelId] ?? createEmptyLevelScore(levelId)
-    const currentCategory = levelScore.categories[categoryId] ?? { completed: false, score: 0 }
+    const currentCategory = levelScore.categories[categoryId] ?? createEmptyCategoryState()
+    const categoryConfig = getCategoryConfig(levelId, categoryId)
     const unlockedBefore = new Set(progress.value.unlockedLevels)
+    const passingCorrect = categoryConfig?.passingCorrect ?? 0
+    const passed = correctCount >= passingCorrect
 
     levelScore.categories[categoryId] = {
       ...currentCategory,
-      completed: true,
+      completed: passed,
       score,
+      correctCount,
     }
 
     const categoryEntries = Object.values(levelScore.categories)
@@ -136,6 +164,9 @@ export const useProgressStore = defineStore('progress', () => {
     const nextLevel = jlptLevels[currentIndex + 1]
 
     return {
+      passed,
+      passingCorrect,
+      correctCount,
       completedLevel: allCategoriesComplete,
       unlockedNextLevel: Boolean(nextLevel && !unlockedBefore.has(nextLevel.id) && progress.value.unlockedLevels.includes(nextLevel.id)),
       nextLevelId: nextLevel?.id ?? null,
@@ -156,6 +187,9 @@ export const useProgressStore = defineStore('progress', () => {
     isUnlocked,
     isCompleted,
     getLevelScore,
+    getCategoryConfig,
+    isCategoryCompleted,
+    canAccessCategory,
     completeCategory,
     resetProgress,
   }

@@ -1,0 +1,287 @@
+[
+  {
+    "id": "q01",
+    "number": 1,
+    "section": "fill-blank",
+    "type": "image",
+    "prompt": "Pilih partikel atau bentuk kalimat yang tepat untuk mengisi bagian kosong.",
+    "image": "/questions/n5-bunpou-dokkai/q01.PNG",
+    "answer": 2
+  },
+  {
+    "id": "q02",
+    "number": 2,
+    "section": "fill-blank",
+    "type": "image",
+    "prompt": "Pilih partikel atau bentuk kalimat yang tepat untuk mengisi bagian kosong.",
+    "image": "/questions/n5-bunpou-dokkai/q02.PNG",
+    "answer": 3
+  },
+  {
+    "id": "q03",
+    "number": 3,
+    "section": "fill-blank",
+    "type": "image",
+    "prompt": "Pilih partikel atau bentuk kalimat yang tepat untuk mengisi bagian kosong.",
+    "image": "/questions/n5-bunpou-dokkai/q03.PNG",
+    "answer": 2
+  },
+  {
+    "id": "q04",
+    "number": 4,
+    "section": "fill-blank",
+    "type": "image",
+    "prompt": "Pilih partikel atau bentuk kalimat yang tepat untuk mengisi bagian kosong.",
+    "image": "/questions/n5-bunpou-dokkai/q04.PNG",
+    "answer": 4
+  },
+  {
+    "id": "q05",
+    "number": 5,
+    "section": "fill-blank",
+    "type": "image",
+    "prompt": "Pilih partikel atau bentuk kalimat yang tepat untuk mengisi bagian kosong.",
+    "image": "/questions/n5-bunpou-dokkai/q05.PNG",
+    "answer": 3
+  },
+  {
+    "id": "q06",
+    "number": 6,
+    "section": "fill-blank",
+    "type": "image",
+    "prompt": "Pilih partikel atau bentuk kalimat yang tepat untuk mengisi bagian kosong.",
+    "image": "/questions/n5-bunpou-dokkai/q06.PNG",
+    "answer": 2
+  },
+  {
+    "id": "q07",
+    "number": 7,
+    "section": "fill-blank",
+    "type": "image",
+    "prompt": "Pilih partikel atau bentuk kalimat yang tepat untuk mengisi bagian kosong.",
+    "image": "/questions/n5-bunpou-dokkai/q07.PNG",
+    "answer": 3
+  },
+  {
+    "id": "q08",
+    "number": 8,
+    "section": "fill-blank",
+    "type": "image",
+    "prompt": "Pilih partikel atau bentuk kalimat yang tepat untuk mengisi bagian kosong.",
+    "image": "/questions/n5-bunpou-dokkai/q08.PNG",
+    "answer": 1
+  },
+  {
+    "id": "q09",
+    "number": 9,
+    "section": "fill-blank",
+    "type": "image",
+    "prompt": "Pilih partikel atau bentuk kalimat yang tepat untuk mengisi bagian kosong.",
+    "image": "/questions/n5-bunpou-dokkai/q09.PNG",
+    "answer": 3
+  },
+  {
+    "id": "q10",
+    "number": 10,
+    "section": "fill-blank",
+    "type": "image",
+    "prompt": "Pilih partikel atau bentuk kalimat yang tepat untuk mengisi bagian kosong.",
+    "image": "/questions/n5-bunpou-dokkai/q10.PNG",
+    "answer": 3
+  },
+  {
+    "id": "q11",
+    "number": 11,
+    "section": "fill-blank",
+    "type": "image",
+    "prompt": "Pilih partikel atau bentuk kalimat yang tepat untuk mengisi bagian kosong.",
+    "image": "/questions/n5-bunpou-dokkai/q11.PNG",
+    "answer": 1
+  },
+  {
+    "id": "q12",
+    "number": 12,
+    "section": "fill-blank",
+    "type": "image",
+    "prompt": "Pilih partikel atau bentuk kalimat yang tepat untuk mengisi bagian kosong.",
+    "image": "/questions/n5-bunpou-dokkai/q12.PNG",
+    "answer": 1
+  },
+  {
+    "id": "q13",
+    "number": 13,
+    "section": "fill-blank",
+    "type": "image",
+    "prompt": "Pilih partikel atau bentuk kalimat yang tepat untuk mengisi bagian kosong.",
+    "image": "/questions/n5-bunpou-dokkai/q13.PNG",
+    "answer": 4
+  },
+  {
+    "id": "q14",
+    "number": 14,
+    "section": "fill-blank",
+    "type": "image",
+    "prompt": "Pilih partikel atau bentuk kalimat yang tepat untuk mengisi bagian kosong.",
+    "image": "/questions/n5-bunpou-dokkai/q14.PNG",
+    "answer": 2
+  },
+  {
+    "id": "q15",
+    "number": 15,
+    "section": "fill-blank",
+    "type": "image",
+    "prompt": "Pilih partikel atau bentuk kalimat yang tepat untuk mengisi bagian kosong.",
+    "image": "/questions/n5-bunpou-dokkai/q15.PNG",
+    "answer": 4
+  },
+  {
+    "id": "q16",
+    "number": 16,
+    "section": "fill-blank",
+    "type": "image",
+    "prompt": "Pilih partikel atau bentuk kalimat yang tepat untuk mengisi bagian kosong.",
+    "image": "/questions/n5-bunpou-dokkai/q16.PNG",
+    "answer": 1
+  },
+  {
+    "id": "q17",
+    "number": 17,
+    "section": "sentence-order",
+    "type": "image",
+    "prompt": "Susun kata-kata yang tersedia, lalu pilih kata yang tepat untuk posisi bintang.",
+    "image": "/questions/n5-bunpou-dokkai/q17.PNG",
+    "answer": 4
+  },
+  {
+    "id": "q18",
+    "number": 18,
+    "section": "sentence-order",
+    "type": "image",
+    "prompt": "Susun kata-kata yang tersedia, lalu pilih kata yang tepat untuk posisi bintang.",
+    "image": "/questions/n5-bunpou-dokkai/q18.PNG",
+    "answer": 1
+  },
+  {
+    "id": "q19",
+    "number": 19,
+    "section": "sentence-order",
+    "type": "image",
+    "prompt": "Susun kata-kata yang tersedia, lalu pilih kata yang tepat untuk posisi bintang.",
+    "image": "/questions/n5-bunpou-dokkai/q19.PNG",
+    "answer": 1
+  },
+  {
+    "id": "q20",
+    "number": 20,
+    "section": "sentence-order",
+    "type": "image",
+    "prompt": "Susun kata-kata yang tersedia, lalu pilih kata yang tepat untuk posisi bintang.",
+    "image": "/questions/n5-bunpou-dokkai/q20.PNG",
+    "answer": 3
+  },
+  {
+    "id": "q21",
+    "number": 21,
+    "section": "sentence-order",
+    "type": "image",
+    "prompt": "Susun kata-kata yang tersedia, lalu pilih kata yang tepat untuk posisi bintang.",
+    "image": "/questions/n5-bunpou-dokkai/q21.PNG",
+    "answer": 2
+  },
+  {
+    "id": "q22-26",
+    "number": 22,
+    "section": "passage-fill",
+    "type": "group",
+    "prompt": "Baca bacaan lalu pilih jawaban yang paling tepat untuk setiap nomor.",
+    "images": [
+      {
+        "src": "/questions/n5-bunpou-dokkai/q22-26 1.PNG",
+        "alt": "Bacaan untuk soal 22 sampai 26"
+      },
+      {
+        "src": "/questions/n5-bunpou-dokkai/q22-26 2.PNG",
+        "alt": "Pilihan jawaban untuk soal 22 sampai 26"
+      }
+    ],
+    "questionNumbers": [22, 23, 24, 25, 26],
+    "answers": {
+      "22": 2,
+      "23": 2,
+      "24": 3,
+      "25": 3,
+      "26": 1
+    }
+  },
+  {
+    "id": "q27",
+    "number": 27,
+    "section": "reading-match",
+    "type": "image",
+    "prompt": "Pilih bunshou atau kalimat yang paling sesuai dengan paragraf yang diberikan.",
+    "image": "/questions/n5-bunpou-dokkai/q27.PNG",
+    "answer": 2
+  },
+  {
+    "id": "q28",
+    "number": 28,
+    "section": "reading-photo",
+    "type": "image",
+    "prompt": "Pilih gambar atau foto yang paling sesuai dengan paragraf yang diberikan.",
+    "image": "/questions/n5-bunpou-dokkai/q28.PNG",
+    "answer": 3
+  },
+  {
+    "id": "q29",
+    "number": 29,
+    "section": "reading-letter",
+    "type": "image",
+    "prompt": "Pilih kalimat yang benar sesuai dengan paragraf atau surat yang diberikan.",
+    "image": "/questions/n5-bunpou-dokkai/q29.PNG",
+    "answer": 4
+  },
+  {
+    "id": "q30-31",
+    "number": 30,
+    "section": "reading-questions",
+    "type": "group",
+    "prompt": "Baca ceritanya, lalu jawab dua pertanyaan berikut berdasarkan isi bacaan.",
+    "images": [
+      {
+        "src": "/questions/n5-bunpou-dokkai/q30-31.PNG",
+        "alt": "Bacaan untuk soal 30 dan 31"
+      },
+      {
+        "src": "/questions/n5-bunpou-dokkai/q30.PNG",
+        "alt": "Soal 30"
+      },
+      {
+        "src": "/questions/n5-bunpou-dokkai/q31.PNG",
+        "alt": "Soal 31"
+      }
+    ],
+    "questionNumbers": [30, 31],
+    "answers": {
+      "30": 4,
+      "31": 1
+    }
+  },
+  {
+    "id": "q32",
+    "number": 32,
+    "section": "reading-ad",
+    "type": "image",
+    "prompt": "Lihat foto atau iklan pendukung, lalu pilih jawaban yang paling tepat.",
+    "images": [
+      {
+        "src": "/questions/n5-bunpou-dokkai/q32foto.PNG",
+        "alt": "Iklan pendukung untuk soal 32"
+      },
+      {
+        "src": "/questions/n5-bunpou-dokkai/q32.PNG",
+        "alt": "Soal 32"
+      }
+    ],
+    "answer": 2
+  }
+]
