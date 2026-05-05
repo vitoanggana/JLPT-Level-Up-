@@ -1,10 +1,12 @@
 import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
 
+import type { AuthUser, LoginResult, UserRole } from '../types'
+
 const USERS_STORAGE_KEY = 'jlpt-level-up-users'
 const SESSION_STORAGE_KEY = 'jlpt-level-up-session'
 
-const seededUsers = [
+const seededUsers: AuthUser[] = [
   {
     id: 'admin-1',
     name: 'Admin JLPT',
@@ -23,11 +25,11 @@ const seededUsers = [
   },
 ]
 
-function cloneSeededUsers() {
-  return JSON.parse(JSON.stringify(seededUsers))
+function cloneSeededUsers(): AuthUser[] {
+  return JSON.parse(JSON.stringify(seededUsers)) as AuthUser[]
 }
 
-function normalizeUsers(rawUsers) {
+function normalizeUsers(rawUsers: unknown): AuthUser[] {
   const fallbackUsers = cloneSeededUsers()
 
   if (!Array.isArray(rawUsers) || !rawUsers.length) {
@@ -35,19 +37,23 @@ function normalizeUsers(rawUsers) {
   }
 
   return rawUsers.map((user) => {
-    const seededMatch = fallbackUsers.find((seededUser) => seededUser.role === user?.role)
+    const partialUser = (user ?? {}) as Partial<AuthUser> & { role?: UserRole }
+    const seededMatch = fallbackUsers.find((seededUser) => seededUser.role === partialUser.role)
 
     return {
       ...seededMatch,
-      ...user,
-      loginId: user?.loginId ?? seededMatch?.loginId ?? '',
-      password: user?.loginId ? user.password : (seededMatch?.password ?? user?.password ?? ''),
-      email: user?.email ?? seededMatch?.email ?? '',
+      ...partialUser,
+      id: partialUser.id ?? seededMatch?.id ?? '',
+      name: partialUser.name ?? seededMatch?.name ?? '',
+      role: partialUser.role ?? seededMatch?.role ?? 'user',
+      loginId: partialUser.loginId ?? seededMatch?.loginId ?? '',
+      password: partialUser.loginId ? (partialUser.password ?? '') : (seededMatch?.password ?? partialUser.password ?? ''),
+      email: partialUser.email ?? seededMatch?.email ?? '',
     }
   })
 }
 
-function loadUsers() {
+function loadUsers(): AuthUser[] {
   const raw = localStorage.getItem(USERS_STORAGE_KEY)
 
   if (!raw) {
@@ -63,13 +69,13 @@ function loadUsers() {
   }
 }
 
-function loadSessionUserId() {
+function loadSessionUserId(): string {
   return localStorage.getItem(SESSION_STORAGE_KEY) ?? ''
 }
 
 export const useAuthStore = defineStore('auth', () => {
-  const users = ref(loadUsers())
-  const currentUserId = ref(loadSessionUserId())
+  const users = ref<AuthUser[]>(loadUsers())
+  const currentUserId = ref<string>(loadSessionUserId())
 
   const currentUser = computed(() => {
     return users.value.find((user) => user.id === currentUserId.value) ?? null
@@ -96,7 +102,7 @@ export const useAuthStore = defineStore('auth', () => {
     persistUsers()
   }
 
-  function login(loginId, password) {
+  function login(loginId: string, password: string): LoginResult {
     const normalizedLoginId = loginId.trim().toLowerCase()
     const matchedUser = users.value.find((user) => user.loginId?.toLowerCase() === normalizedLoginId)
 

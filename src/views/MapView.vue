@@ -1,26 +1,31 @@
-<script setup>
+<script setup lang="ts">
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
 import AppShell from '../components/AppShell.vue'
 import { jlptLevels } from '../data/levels'
 import { useProgressStore } from '../stores/progress'
+import type { LevelConfig, LevelId } from '../types'
 
 const router = useRouter()
 const progressStore = useProgressStore()
-const previewIslandId = ref(progressStore.progress.selectedLevel ?? 'n5')
-const mapViewport = ref(null)
+const previewIslandId = ref<LevelId>(progressStore.progress.selectedLevel ?? 'n5')
+const mapViewport = ref<HTMLElement | null>(null)
 const isDragging = ref(false)
 const dragMoved = ref(false)
 const suppressClick = ref(false)
 
-const dragState = {
+const dragState: {
+  pointerId: number | null
+  startX: number
+  startY: number
+} = {
   pointerId: null,
   startX: 0,
   startY: 0,
 }
 
-const previewIsland = computed(() => {
+const previewIsland = computed<LevelConfig>(() => {
   return jlptLevels.find((level) => level.id === previewIslandId.value) ?? jlptLevels[0]
 })
 
@@ -31,7 +36,7 @@ const previewCompletedCount = computed(() => {
   }).length
 })
 
-function getIslandStatus(levelId) {
+function getIslandStatus(levelId: LevelId): 'completed' | 'unlocked' | 'locked' {
   if (progressStore.isCompleted(levelId)) {
     return 'completed'
   }
@@ -43,11 +48,11 @@ function getIslandStatus(levelId) {
   return 'locked'
 }
 
-function handleHover(levelId) {
+function handleHover(levelId: LevelId): void {
   previewIslandId.value = levelId
 }
 
-function openIsland(levelId) {
+function openIsland(levelId: LevelId): void {
   if (suppressClick.value) {
     suppressClick.value = false
     return
@@ -61,16 +66,16 @@ function openIsland(levelId) {
   router.push(`/island/${levelId}`)
 }
 
-function syncHoverFromPoint(clientX, clientY) {
+function syncHoverFromPoint(clientX: number, clientY: number): void {
   const hoveredElement = document.elementFromPoint(clientX, clientY)
-  const hoveredRegion = hoveredElement?.closest?.('[data-level-id]')
+  const hoveredRegion = hoveredElement?.closest?.('[data-level-id]') as HTMLElement | null
 
   if (hoveredRegion?.dataset?.levelId) {
-    handleHover(hoveredRegion.dataset.levelId)
+    handleHover(hoveredRegion.dataset.levelId as LevelId)
   }
 }
 
-function handlePointerDown(event) {
+function handlePointerDown(event: PointerEvent): void {
   if (event.button != null && event.button !== 0) {
     return
   }
@@ -81,11 +86,12 @@ function handlePointerDown(event) {
   dragState.startX = event.clientX
   dragState.startY = event.clientY
 
-  event.currentTarget.setPointerCapture?.(event.pointerId)
+  const currentTarget = event.currentTarget as HTMLElement | null
+  currentTarget?.setPointerCapture?.(event.pointerId)
   syncHoverFromPoint(event.clientX, event.clientY)
 }
 
-function handlePointerMove(event) {
+function handlePointerMove(event: PointerEvent): void {
   if (!isDragging.value || dragState.pointerId !== event.pointerId) {
     return
   }
@@ -100,9 +106,10 @@ function handlePointerMove(event) {
   syncHoverFromPoint(event.clientX, event.clientY)
 }
 
-function finishDrag(event) {
+function finishDrag(event: PointerEvent): void {
   if (dragState.pointerId != null && event?.currentTarget) {
-    event.currentTarget.releasePointerCapture?.(dragState.pointerId)
+    const currentTarget = event.currentTarget as HTMLElement | null
+    currentTarget?.releasePointerCapture?.(dragState.pointerId)
   }
 
   isDragging.value = false
@@ -114,7 +121,6 @@ function finishDrag(event) {
   }
   dragState.pointerId = null
 }
-
 </script>
 
 <template>

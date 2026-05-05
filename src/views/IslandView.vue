@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
@@ -6,26 +6,33 @@ import AppShell from '../components/AppShell.vue'
 import { getQuizDefinition } from '../data/quizzes'
 import { jlptLevels } from '../data/levels'
 import { useProgressStore } from '../stores/progress'
+import type { CategoryConfig, CategoryId, CategoryProgressMap, LevelId } from '../types'
 
 const route = useRoute()
 const router = useRouter()
 const progressStore = useProgressStore()
+const levelId = computed(() => route.params.levelId as LevelId)
 
 const island = computed(() => {
-  return jlptLevels.find((level) => level.id === route.params.levelId)
+  return jlptLevels.find((level) => level.id === levelId.value) ?? null
 })
 
-const categoryStateMap = computed(() => {
-  return progressStore.progress.levelScores[route.params.levelId]?.categories ?? {}
+const categoryStateMap = computed<CategoryProgressMap>(() => {
+  return progressStore.progress.levelScores[levelId.value]?.categories ?? {}
 })
 
-const islandMastery = computed(() => progressStore.getLevelScore(route.params.levelId))
+const islandMastery = computed(() => progressStore.getLevelScore(levelId.value))
 
 const completedCount = computed(() => {
   return island.value?.categories.filter((category) => categoryStateMap.value[category.id]?.completed).length ?? 0
 })
 
-const islandNodes = computed(() => {
+type IslandNodeView = CategoryConfig & {
+  top: string
+  left: string
+}
+
+const islandNodes = computed<IslandNodeView[]>(() => {
   return (island.value?.categories ?? []).map((category) => ({
     ...category,
     top: category.islandNode?.top || '50%',
@@ -34,10 +41,10 @@ const islandNodes = computed(() => {
 })
 
 const routePath = computed(() => {
-  const orderedIds = ['moji-goi', 'bunpou-dokkai', 'choukai', 'exam']
+  const orderedIds: CategoryId[] = ['moji-goi', 'bunpou-dokkai', 'choukai', 'exam']
   const orderedNodes = orderedIds
     .map((categoryId) => islandNodes.value.find((category) => category.id === categoryId))
-    .filter(Boolean)
+    .filter((category): category is IslandNodeView => Boolean(category))
 
   if (!orderedNodes.length) {
     return ''
@@ -59,11 +66,11 @@ const routePath = computed(() => {
   }, '')
 })
 
-function canPlayCategory(categoryId) {
-  return progressStore.canAccessCategory(route.params.levelId, categoryId)
+function canPlayCategory(categoryId: CategoryId): boolean {
+  return progressStore.canAccessCategory(levelId.value, categoryId)
 }
 
-function categoryStatus(categoryId) {
+function categoryStatus(categoryId: CategoryId): 'done' | 'locked' | 'open' {
   if (categoryStateMap.value[categoryId]?.completed) {
     return 'done'
   }
@@ -75,17 +82,17 @@ function categoryStatus(categoryId) {
   return 'open'
 }
 
-function completeCategory(categoryId) {
+function completeCategory(categoryId: CategoryId): void {
   if (!canPlayCategory(categoryId)) {
     return
   }
 
-  if (getQuizDefinition(route.params.levelId, categoryId)) {
-    router.push(`/quiz/${route.params.levelId}/${categoryId}`)
+  if (getQuizDefinition(levelId.value, categoryId)) {
+    router.push(`/quiz/${levelId.value}/${categoryId}`)
     return
   }
 
-  progressStore.completeCategory(route.params.levelId, categoryId, 80)
+  progressStore.completeCategory(levelId.value, categoryId, 80)
 }
 </script>
 
@@ -163,9 +170,9 @@ function completeCategory(categoryId) {
     </div>
 
     <div v-else class="panel empty-state">
-      <h1>Island tidak ditemukan</h1>
+      <h1>Pulau tidak ditemukan</h1>
       <p class="small-note">Level yang dipilih belum ada di route saat ini.</p>
-      <RouterLink class="btn btn-primary" to="/map">Balik ke Map</RouterLink>
+      <RouterLink class="btn btn-primary" to="/map">Kembali ke Peta</RouterLink>
     </div>
   </AppShell>
 </template>

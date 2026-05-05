@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import AppShell from '../components/AppShell.vue'
 import { jlptLevels } from '../data/levels'
 </script>
@@ -12,12 +12,12 @@ import { jlptLevels } from '../data/levels'
             <p class="eyebrow">JLPT Adventure</p>
             <h1 class="title">Naik level bahasa Jepang lewat petualangan pulau.</h1>
             <p class="subtitle">
-              Single-player mode jadi inti dulu: pemain menjelajah peta Jepang, menyelesaikan quiz
-              per kategori, lalu membuka island berikutnya dari N5 sampai N1.
+              Mode solo jadi inti dulu: pemain menjelajah peta Jepang, menyelesaikan kuis
+              per kategori, lalu membuka pulau berikutnya dari N5 sampai N1.
             </p>
 
             <div class="button-row hero-copy__actions">
-              <RouterLink class="btn btn-primary" to="/map">Masuk ke Map</RouterLink>
+              <RouterLink class="btn btn-primary" to="/map">Masuk ke Peta</RouterLink>
               <RouterLink class="btn btn-secondary" to="/login">Buka Login</RouterLink>
             </div>
           </div>
@@ -52,7 +52,7 @@ import { jlptLevels } from '../data/levels'
               viewBox="0 0 1040 640"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
-              aria-label="Mini Japan map"
+              aria-label="Mini peta Jepang"
             >
               <g
                 v-for="island in jlptLevels"

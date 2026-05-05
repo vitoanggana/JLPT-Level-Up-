@@ -1,10 +1,11 @@
-<script setup>
+<script setup lang="ts">
 import { computed } from 'vue'
 
 import AppShell from '../components/AppShell.vue'
 import { jlptLevels } from '../data/levels'
 import { useAuthStore } from '../stores/auth'
 import { useProgressStore } from '../stores/progress'
+import type { CategoryConfig } from '../types'
 
 const progressStore = useProgressStore()
 const authStore = useAuthStore()
@@ -12,7 +13,7 @@ const currentLevelConfig = computed(() => {
   return jlptLevels.find((level) => level.id === progressStore.currentLevel.id) ?? null
 })
 
-function mockCompleteCategory(category) {
+function mockCompleteCategory(category: CategoryConfig): void {
   progressStore.completeCategory(
     progressStore.currentLevel.id,
     category.id,
@@ -21,7 +22,7 @@ function mockCompleteCategory(category) {
   )
 }
 
-function mockCompleteCurrentLevel() {
+function mockCompleteCurrentLevel(): void {
   for (const category of currentLevelConfig.value?.categories ?? []) {
     mockCompleteCategory(category)
   }

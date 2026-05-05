@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
@@ -6,32 +6,48 @@ import AppShell from '../components/AppShell.vue'
 import { getQuizDefinition } from '../data/quizzes'
 import { jlptLevels } from '../data/levels'
 import { useProgressStore } from '../stores/progress'
+import type {
+  CategoryConfig,
+  CategoryId,
+  CompleteCategoryResult,
+  LevelId,
+  QuizDefinition,
+  QuizImage,
+  QuizQuestion,
+  MultiAnswerQuestion,
+} from '../types'
 
 const route = useRoute()
 const router = useRouter()
 const progressStore = useProgressStore()
+const levelId = computed(() => route.params.levelId as LevelId)
+const categoryId = computed(() => route.params.categoryId as CategoryId)
 
-const quizDefinition = getQuizDefinition(route.params.levelId, route.params.categoryId)
+const quizDefinition = computed<QuizDefinition | null>(() => getQuizDefinition(levelId.value, categoryId.value))
 
 const currentIndex = ref(0)
-const answers = ref({})
+const answers = ref<Record<string, number>>({})
 const submitted = ref(false)
-const submissionOutcome = ref(null)
+const submissionOutcome = ref<CompleteCategoryResult | null>(null)
 
-const currentQuestion = computed(() => quizDefinition?.questions[currentIndex.value] ?? null)
-const totalCards = computed(() => quizDefinition?.questions.length ?? 0)
-const categoryConfig = computed(() => {
-  return jlptLevels.find((level) => level.id === route.params.levelId)?.categories.find((category) => category.id === route.params.categoryId) ?? null
+const currentQuestion = computed<QuizQuestion | null>(() => quizDefinition.value?.questions[currentIndex.value] ?? null)
+const totalCards = computed(() => quizDefinition.value?.questions.length ?? 0)
+const categoryConfig = computed<CategoryConfig | null>(() => {
+  return jlptLevels.find((level) => level.id === levelId.value)?.categories.find((category) => category.id === categoryId.value) ?? null
 })
 const passingCorrect = computed(() => categoryConfig.value?.passingCorrect ?? totalQuestions.value)
 const passedQuiz = computed(() => correctCount.value >= passingCorrect.value)
 
-function getQuestionKeys(question) {
+function isMultiAnswerQuestion(question: QuizQuestion | null): question is MultiAnswerQuestion {
+  return Boolean(question && 'questionNumbers' in question && Array.isArray(question.questionNumbers))
+}
+
+function getQuestionKeys(question: QuizQuestion | null): string[] {
   if (!question) {
     return []
   }
 
-  if (Array.isArray(question.questionNumbers)) {
+  if (isMultiAnswerQuestion(question)) {
     return question.questionNumbers.map((number) => String(number))
   }
 
@@ -43,20 +59,23 @@ function getQuestionKeys(question) {
 }
 
 const totalQuestions = computed(() => {
-  if (quizDefinition?.questionCount) {
-    return quizDefinition.questionCount
+  if (quizDefinition.value?.questionCount) {
+    return quizDefinition.value.questionCount
   }
 
-  return quizDefinition?.questions.reduce((sum, question) => sum + getQuestionKeys(question).length, 0) ?? 0
+  return quizDefinition.value?.questions.reduce((sum, question) => sum + getQuestionKeys(question).length, 0) ?? 0
 })
 
 const answeredCount = computed(() => {
-  return quizDefinition?.questions.reduce((sum, question) => {
+  return quizDefinition.value?.questions.reduce((sum, question) => {
     return sum + getQuestionKeys(question).filter((key) => answers.value[key] != null).length
   }, 0) ?? 0
 })
 
 const currentQuestionKeyList = computed(() => getQuestionKeys(currentQuestion.value))
+const currentQuestionNumbers = computed(() => {
+  return isMultiAnswerQuestion(currentQuestion.value) ? currentQuestion.value.questionNumbers : []
+})
 const currentAnsweredCount = computed(() => {
   return currentQuestionKeyList.value.filter((key) => answers.value[key] != null).length
 })
@@ -66,7 +85,7 @@ const currentQuestionLabel = computed(() => {
     return ''
   }
 
-  if (Array.isArray(currentQuestion.value.questionNumbers) && currentQuestion.value.questionNumbers.length > 1) {
+  if (isMultiAnswerQuestion(currentQuestion.value) && currentQuestion.value.questionNumbers.length > 1) {
     const first = currentQuestion.value.questionNumbers[0]
     const last = currentQuestion.value.questionNumbers[currentQuestion.value.questionNumbers.length - 1]
     return `${first}-${last}`
@@ -76,7 +95,7 @@ const currentQuestionLabel = computed(() => {
 })
 
 const questionInstruction = computed(() => {
-  if (route.params.categoryId === 'bunpou-dokkai') {
+  if (categoryId.value === 'bunpou-dokkai') {
     const section = currentQuestion.value?.section
 
     if (section === 'fill-blank') {
@@ -173,8 +192,8 @@ const questionInstruction = computed(() => {
 })
 
 const correctCount = computed(() => {
-  return quizDefinition?.questions.reduce((sum, question) => {
-    if (Array.isArray(question.questionNumbers)) {
+  return quizDefinition.value?.questions.reduce((sum, question) => {
+    if (isMultiAnswerQuestion(question)) {
       return sum + question.questionNumbers.filter((number) => {
         return answers.value[String(number)] === question.answers?.[String(number)]
       }).length
@@ -192,7 +211,7 @@ const scorePercent = computed(() => {
   return Math.round((correctCount.value / totalQuestions.value) * 100)
 })
 
-function chooseAnswer(choiceNumber, targetKey = null) {
+function chooseAnswer(choiceNumber: number, targetKey: string | number | null = null): void {
   if (!currentQuestion.value || submitted.value) {
     return
   }
@@ -205,41 +224,41 @@ function chooseAnswer(choiceNumber, targetKey = null) {
   }
 }
 
-function goNext() {
+function goNext(): void {
   if (currentIndex.value < totalCards.value - 1) {
     currentIndex.value += 1
   }
 }
 
-function goPrevious() {
+function goPrevious(): void {
   if (currentIndex.value > 0) {
     currentIndex.value -= 1
   }
 }
 
-function submitQuiz() {
-  if (!quizDefinition || answeredCount.value !== totalQuestions.value) {
+function submitQuiz(): void {
+  if (!quizDefinition.value || answeredCount.value !== totalQuestions.value) {
     return
   }
 
   submissionOutcome.value = progressStore.completeCategory(
-    route.params.levelId,
-    route.params.categoryId,
+    levelId.value,
+    categoryId.value,
     scorePercent.value,
     correctCount.value,
   )
   submitted.value = true
 }
 
-function retryQuiz() {
+function retryQuiz(): void {
   router.go(0)
 }
 
-function isCardAnswered(question) {
+function isCardAnswered(question: QuizQuestion): boolean {
   return getQuestionKeys(question).every((key) => answers.value[key] != null)
 }
 
-function questionImages(question) {
+function questionImages(question: QuizQuestion | null): QuizImage[] {
   if (!question) {
     return []
   }
@@ -276,7 +295,7 @@ function questionImages(question) {
             </div>
             <p class="small-note">
               {{ answeredCount }} / {{ totalQuestions }} terjawab
-              <span v-if="currentQuestionKeyList.length > 1"> • set ini {{ currentAnsweredCount }} / {{ currentQuestionKeyList.length }}</span>
+              <span v-if="currentQuestionKeyList.length > 1"> | set ini {{ currentAnsweredCount }} / {{ currentQuestionKeyList.length }}</span>
             </p>
           </div>
 
@@ -325,7 +344,7 @@ function questionImages(question) {
 
           <div v-else class="quiz-multi-answer-list">
             <div
-              v-for="questionNumber in currentQuestion.questionNumbers"
+              v-for="questionNumber in currentQuestionNumbers"
               :key="`${currentQuestion.id}-${questionNumber}`"
               class="quiz-multi-answer-card"
             >
@@ -369,7 +388,7 @@ function questionImages(question) {
               :disabled="answeredCount !== totalQuestions"
               @click="submitQuiz"
             >
-              Selesaikan Quiz
+              Selesaikan Kuis
             </button>
           </div>
         </div>
@@ -395,20 +414,20 @@ function questionImages(question) {
           <div class="milestone-list" style="margin-top: 18px;">
             <div>Kartu di sesi ini: {{ totalCards }}</div>
             <div>Soal yang dinilai: {{ totalQuestions }}</div>
-            <div>Level: {{ route.params.levelId.toUpperCase() }}</div>
+            <div>Level: {{ levelId.toUpperCase() }}</div>
           </div>
         </aside>
       </div>
 
       <div v-else class="quiz-result panel">
-        <p class="eyebrow">Hasil Quiz</p>
+        <p class="eyebrow">Hasil Kuis</p>
         <h1 class="title">Nilai {{ scorePercent }}%</h1>
         <p class="subtitle">
           Kamu menjawab benar {{ correctCount }} dari {{ totalQuestions }} soal.
         </p>
         <p class="small-note" style="margin-top: 12px;">
           Minimum kelulusan: {{ passingCorrect }} / {{ totalQuestions }} benar.
-          {{ passedQuiz ? 'Stage clear, node berikutnya terbuka jika ada.' : 'Belum lulus, jadi stage berikutnya belum terbuka.' }}
+          {{ passedQuiz ? 'Lulus, node berikutnya terbuka jika tersedia.' : 'Belum lulus, jadi tahap berikutnya belum terbuka.' }}
         </p>
 
         <div class="stats-row" style="margin-top: 24px;">
@@ -427,7 +446,7 @@ function questionImages(question) {
         </div>
 
         <div class="button-row" style="margin-top: 24px;">
-          <button class="btn btn-primary" type="button" @click="router.push(`/island/${route.params.levelId}`)">
+          <button class="btn btn-primary" type="button" @click="router.push(`/island/${levelId}`)">
             Kembali ke Pulau
           </button>
           <button class="btn btn-secondary" type="button" @click="retryQuiz">
@@ -439,10 +458,10 @@ function questionImages(question) {
 
     <section v-else class="quiz-screen">
       <div class="panel empty-state">
-        <h1>Quiz belum tersedia</h1>
-        <p class="small-note">Bank soal untuk route ini belum terhubung ke quiz flow.</p>
+        <h1>Kuis belum tersedia</h1>
+        <p class="small-note">Bank soal untuk rute ini belum terhubung ke alur kuis.</p>
         <div class="button-row" style="justify-content: center; margin-top: 20px;">
-          <button class="btn btn-primary" type="button" @click="router.push(`/island/${route.params.levelId}`)">
+          <button class="btn btn-primary" type="button" @click="router.push(`/island/${levelId}`)">
             Kembali ke Pulau
           </button>
         </div>

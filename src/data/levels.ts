@@ -1,4 +1,8 @@
-function createCategory({ id, title, questions, description, islandNode, passingCorrect, unlockAfter = [] }) {
+import type { CategoryConfig, ProgressState, LevelConfig } from '../types'
+
+type CategoryInput = Omit<CategoryConfig, 'unlockAfter'> & { unlockAfter?: CategoryConfig['unlockAfter'] }
+
+function createCategory({ id, title, questions, description, islandNode, passingCorrect, unlockAfter = [] }: CategoryInput): CategoryConfig {
   return {
     id,
     title,
@@ -10,7 +14,7 @@ function createCategory({ id, title, questions, description, islandNode, passing
   }
 }
 
-export const jlptLevels = [
+export const jlptLevels: LevelConfig[] = [
   {
     id: 'n5',
     label: 'N5',
@@ -179,7 +183,7 @@ export const jlptLevels = [
   },
 ]
 
-export const starterProgress = {
+export const starterProgress: ProgressState = {
   unlockedLevels: ['n5'],
   completedLevels: [],
   selectedLevel: 'n5',
@@ -187,10 +191,10 @@ export const starterProgress = {
     n5: {
       mastery: 0,
       categories: {
-        'moji-goi': { completed: false, score: 0 },
-        'bunpou-dokkai': { completed: false, score: 0 },
-        choukai: { completed: false, score: 0 },
-        exam: { completed: false, score: 0 },
+        'moji-goi': { completed: false, score: 0, correctCount: 0 },
+        'bunpou-dokkai': { completed: false, score: 0, correctCount: 0 },
+        choukai: { completed: false, score: 0, correctCount: 0 },
+        exam: { completed: false, score: 0, correctCount: 0 },
       },
     },
   },

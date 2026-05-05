@@ -1,18 +1,24 @@
-<script setup>
-import { useRouter } from 'vue-router'
+<script setup lang="ts">
+import { useRouter, type RouteLocationRaw } from 'vue-router'
 
 import { useAuthStore } from '../stores/auth'
 
 const router = useRouter()
 const authStore = useAuthStore()
 
-const navItems = [
+interface NavItem {
+  label: string
+  icon: 'logo' | 'star' | 'profile'
+  to: RouteLocationRaw
+}
+
+const navItems: NavItem[] = [
   { label: 'Beranda', icon: 'logo', to: '/' },
-  { label: 'Map', icon: 'star', to: '/map' },
+  { label: 'Peta', icon: 'star', to: '/map' },
   { label: 'Profil', icon: 'profile', to: '/profile' },
 ]
 
-function handleLogout() {
+function handleLogout(): void {
   authStore.logout()
   router.push('/login')
 }
@@ -32,7 +38,7 @@ function handleLogout() {
           <nav class="sidebar__nav" aria-label="Primary">
             <RouterLink
               v-for="item in navItems"
-              :key="item.to"
+              :key="item.label"
               class="nav-pill"
               :to="item.to"
               :title="item.label"

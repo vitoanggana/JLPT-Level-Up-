@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
@@ -14,7 +14,7 @@ const password = ref('user')
 const feedback = ref('')
 const errorMessage = ref('')
 
-function handleLogin() {
+function handleLogin(): void {
   errorMessage.value = ''
   feedback.value = ''
 
@@ -36,7 +36,7 @@ function handleLogin() {
       <div class="auth-stack">
         <div class="section-head auth-head">
           <div>
-            <p class="eyebrow">Week 1</p>
+            <p class="eyebrow">Minggu 1</p>
             <h1 class="title">Mock login sementara</h1>
             <p class="subtitle">
               Sementara ini autentikasi memakai database mock lokal. Nanti gampang diganti ke Supabase atau backend sendiri.
