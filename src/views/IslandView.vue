@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 import AppShell from '../components/AppShell.vue'
@@ -12,6 +12,7 @@ const route = useRoute()
 const router = useRouter()
 const progressStore = useProgressStore()
 const levelId = computed(() => route.params.levelId as LevelId)
+const pendingCategoryId = ref<CategoryId | null>(null)
 
 const island = computed(() => {
   return jlptLevels.find((level) => level.id === levelId.value) ?? null
@@ -70,8 +71,12 @@ function canPlayCategory(categoryId: CategoryId): boolean {
   return progressStore.canAccessCategory(levelId.value, categoryId)
 }
 
+function isCategoryDone(categoryId: CategoryId): boolean {
+  return Boolean(categoryStateMap.value[categoryId]?.completed)
+}
+
 function categoryStatus(categoryId: CategoryId): 'done' | 'locked' | 'open' {
-  if (categoryStateMap.value[categoryId]?.completed) {
+  if (isCategoryDone(categoryId)) {
     return 'done'
   }
 
@@ -83,16 +88,53 @@ function categoryStatus(categoryId: CategoryId): 'done' | 'locked' | 'open' {
 }
 
 function completeCategory(categoryId: CategoryId): void {
-  if (!canPlayCategory(categoryId)) {
+  if (!canPlayCategory(categoryId) || isCategoryDone(categoryId)) {
     return
   }
 
   if (getQuizDefinition(levelId.value, categoryId)) {
-    router.push(`/quiz/${levelId.value}/${categoryId}`)
+    pendingCategoryId.value = categoryId
     return
   }
 
   progressStore.completeCategory(levelId.value, categoryId, 80)
+}
+
+const pendingCategory = computed(() => {
+  if (!pendingCategoryId.value) {
+    return null
+  }
+
+  return island.value?.categories.find((category) => category.id === pendingCategoryId.value) ?? null
+})
+
+const pendingDurationMinutes = computed(() => {
+  if (pendingCategoryId.value === 'moji-goi') {
+    return 30
+  }
+
+  if (pendingCategoryId.value === 'bunpou-dokkai') {
+    return 45
+  }
+
+  if (pendingCategoryId.value === 'choukai') {
+    return 60
+  }
+
+  return 0
+})
+
+function closeStartDialog(): void {
+  pendingCategoryId.value = null
+}
+
+function startQuiz(): void {
+  if (!pendingCategoryId.value) {
+    return
+  }
+
+  router.push(`/quiz/${levelId.value}/${pendingCategoryId.value}`)
+  pendingCategoryId.value = null
 }
 </script>
 
@@ -125,7 +167,7 @@ function completeCategory(categoryId: CategoryId): void {
                 top: category.islandNode?.top || '50%',
                 left: category.islandNode?.left || '50%',
               }"
-              :disabled="!canPlayCategory(category.id)"
+              :disabled="!canPlayCategory(category.id) || categoryStatus(category.id) === 'done'"
               @click="completeCategory(category.id)"
             >
               <span class="island-node-card__label">{{ category.title }}</span>
@@ -173,6 +215,28 @@ function completeCategory(categoryId: CategoryId): void {
       <h1>Pulau tidak ditemukan</h1>
       <p class="small-note">Level yang dipilih belum ada di route saat ini.</p>
       <RouterLink class="btn btn-primary" to="/map">Kembali ke Peta</RouterLink>
+    </div>
+
+    <div v-if="pendingCategory" class="dialog-backdrop" @click.self="closeStartDialog">
+      <div class="dialog-card">
+        <p class="eyebrow">Konfirmasi Mulai</p>
+        <h2 class="title" style="font-size: 30px;">Siap mengerjakan {{ pendingCategory.title }} {{ levelId.toUpperCase() }}?</h2>
+        <p class="small-note" style="margin-top: 12px;">
+          Jika iya, timer akan mulai ketika kamu menekan tombol Ready.
+        </p>
+        <p class="small-note">
+          Waktu yang tersedia: {{ pendingDurationMinutes }} menit.
+        </p>
+
+        <div class="button-row" style="margin-top: 20px; justify-content: center;">
+          <button class="btn btn-secondary" type="button" @click="closeStartDialog">
+            Batal
+          </button>
+          <button class="btn btn-primary" type="button" @click="startQuiz">
+            Ready
+          </button>
+        </div>
+      </div>
     </div>
   </AppShell>
 </template>

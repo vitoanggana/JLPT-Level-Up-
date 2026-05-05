@@ -19,6 +19,23 @@ export interface QuizImage {
   alt?: string
 }
 
+export interface QuizSubQuestion {
+  number: number
+  image: string
+  audio: string
+  choices?: string[]
+}
+
+export interface QuizIntroExample {
+  title: string
+  prompt: string
+  description: string
+  audioSrc: string
+  imageSrc: string
+  imageAlt: string
+  choices: string[]
+}
+
 export interface SingleAnswerQuestion {
   id: string | number
   number?: number
@@ -28,6 +45,7 @@ export interface SingleAnswerQuestion {
   question?: string
   image?: string
   images?: QuizImage[]
+  audio?: string
   choices?: string[]
   answer: number
 }
@@ -41,9 +59,11 @@ export interface MultiAnswerQuestion {
   question?: string
   image?: string
   images?: QuizImage[]
+  audio?: string
   choices?: string[]
   questionNumbers: number[]
   answers: Record<string, number>
+  subQuestions?: QuizSubQuestion[]
 }
 
 export type QuizQuestion = SingleAnswerQuestion | MultiAnswerQuestion
@@ -53,6 +73,7 @@ export interface QuizDefinition {
   subtitle: string
   questionCount: number
   questions: QuizQuestion[]
+  introExample?: QuizIntroExample
 }
 
 export interface IslandNodeConfig {

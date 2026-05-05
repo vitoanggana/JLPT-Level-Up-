@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import { useRouter, type RouteLocationRaw } from 'vue-router'
+import { computed } from 'vue'
+import { useRoute, useRouter, type RouteLocationRaw } from 'vue-router'
 
 import { useAuthStore } from '../stores/auth'
 
+const route = useRoute()
 const router = useRouter()
 const authStore = useAuthStore()
 
@@ -18,7 +20,19 @@ const navItems: NavItem[] = [
   { label: 'Profil', icon: 'profile', to: '/profile' },
 ]
 
+const handleNavClick = (e: Event) => {
+  if (quizNavigationLocked.value) {
+    e.preventDefault()
+  }
+}
+
+const quizNavigationLocked = computed(() => route.name === 'quiz')
+
 function handleLogout(): void {
+  if (quizNavigationLocked.value) {
+    return
+  }
+
   authStore.logout()
   router.push('/login')
 }
@@ -40,8 +54,11 @@ function handleLogout(): void {
               v-for="item in navItems"
               :key="item.label"
               class="nav-pill"
+              :class="{ 'nav-pill--disabled': quizNavigationLocked }"
               :to="item.to"
               :title="item.label"
+              :aria-disabled="quizNavigationLocked"
+              @click="handleNavClick"
             >
               <span class="nav-icon" :class="`nav-icon--${item.icon}`" aria-hidden="true"></span>
               <span class="sr-only">{{ item.label }}</span>
@@ -53,7 +70,7 @@ function handleLogout(): void {
               <strong>{{ authStore.currentUser.role.toUpperCase() }}</strong>
               <span>{{ authStore.currentUser.name }}</span>
             </div>
-            <button class="sidebar__logout" type="button" @click="handleLogout">
+            <button class="sidebar__logout" type="button" :disabled="quizNavigationLocked" @click="handleLogout">
               Keluar
             </button>
           </div>

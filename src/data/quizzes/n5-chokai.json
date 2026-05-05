@@ -1,0 +1,145 @@
+[
+  {
+    "id": "q01",
+    "number": 1,
+    "section": "choukai-basic",
+    "type": "image",
+    "prompt": "Dengarkan audio, lalu pilih jawaban yang paling sesuai dengan gambar.",
+    "image": "/questions/n5-chokai/q01-q13/q01.PNG",
+    "audio": "/questions/n5-chokai/q01-q13/q01.mp3",
+    "choices": ["Pilihan 1", "Pilihan 2", "Pilihan 3", "Pilihan 4"],
+    "answer": 2
+  },
+  {
+    "id": "q02",
+    "number": 2,
+    "section": "choukai-basic",
+    "type": "image",
+    "prompt": "Dengarkan audio, lalu pilih jawaban yang paling sesuai dengan gambar.",
+    "image": "/questions/n5-chokai/q01-q13/q02.PNG",
+    "audio": "/questions/n5-chokai/q01-q13/q02.mp3",
+    "choices": ["Pilihan 1", "Pilihan 2", "Pilihan 3", "Pilihan 4"],
+    "answer": 1
+  },
+  {
+    "id": "q03",
+    "number": 3,
+    "section": "choukai-basic",
+    "type": "image",
+    "prompt": "Dengarkan audio, lalu pilih jawaban yang paling sesuai dengan gambar.",
+    "image": "/questions/n5-chokai/q01-q13/q03.PNG",
+    "audio": "/questions/n5-chokai/q01-q13/q03.mp3",
+    "choices": ["Pilihan 1", "Pilihan 2", "Pilihan 3", "Pilihan 4"],
+    "answer": 2
+  },
+  {
+    "id": "q04",
+    "number": 4,
+    "section": "choukai-basic",
+    "type": "image",
+    "prompt": "Dengarkan audio, lalu pilih jawaban yang paling sesuai dengan gambar.",
+    "image": "/questions/n5-chokai/q01-q13/q04.PNG",
+    "audio": "/questions/n5-chokai/q01-q13/q04.mp3",
+    "choices": ["Pilihan 1", "Pilihan 2", "Pilihan 3", "Pilihan 4"],
+    "answer": 2
+  },
+  {
+    "id": "q05",
+    "number": 5,
+    "section": "choukai-basic",
+    "type": "image",
+    "prompt": "Dengarkan audio, lalu pilih jawaban yang paling sesuai dengan gambar.",
+    "image": "/questions/n5-chokai/q01-q13/q05.PNG",
+    "audio": "/questions/n5-chokai/q01-q13/q05.mp3",
+    "choices": ["Pilihan 1", "Pilihan 2", "Pilihan 3", "Pilihan 4"],
+    "answer": 3
+  },
+  {
+    "id": "q06",
+    "number": 6,
+    "section": "choukai-basic",
+    "type": "image",
+    "prompt": "Dengarkan audio, lalu pilih jawaban yang paling sesuai dengan gambar.",
+    "image": "/questions/n5-chokai/q01-q13/q06.PNG",
+    "audio": "/questions/n5-chokai/q01-q13/q06.mp3",
+    "choices": ["Pilihan 1", "Pilihan 2", "Pilihan 3", "Pilihan 4"],
+    "answer": 3
+  },
+  {
+    "id": "q07",
+    "number": 7,
+    "section": "choukai-basic",
+    "type": "image",
+    "prompt": "Dengarkan audio, lalu pilih jawaban yang paling sesuai dengan gambar.",
+    "image": "/questions/n5-chokai/q01-q13/q07.PNG",
+    "audio": "/questions/n5-chokai/q01-q13/q07.mp3",
+    "choices": ["Pilihan 1", "Pilihan 2", "Pilihan 3", "Pilihan 4"],
+    "answer": 4
+  },
+  {
+    "id": "q08",
+    "number": 8,
+    "section": "choukai-basic",
+    "type": "image",
+    "prompt": "Dengarkan audio, lalu pilih jawaban yang paling sesuai dengan gambar.",
+    "image": "/questions/n5-chokai/q01-q13/q08.PNG",
+    "audio": "/questions/n5-chokai/q01-q13/q08.mp3",
+    "choices": ["Pilihan 1", "Pilihan 2", "Pilihan 3", "Pilihan 4"],
+    "answer": 1
+  },
+  {
+    "id": "q09",
+    "number": 9,
+    "section": "choukai-basic",
+    "type": "image",
+    "prompt": "Dengarkan audio, lalu pilih jawaban yang paling sesuai dengan gambar.",
+    "image": "/questions/n5-chokai/q01-q13/q09.PNG",
+    "audio": "/questions/n5-chokai/q01-q13/q09.mp3",
+    "choices": ["Pilihan 1", "Pilihan 2", "Pilihan 3", "Pilihan 4"],
+    "answer": 4
+  },
+  {
+    "id": "q10",
+    "number": 10,
+    "section": "choukai-basic",
+    "type": "image",
+    "prompt": "Dengarkan audio, lalu pilih jawaban yang paling sesuai dengan gambar.",
+    "image": "/questions/n5-chokai/q01-q13/q10.PNG",
+    "audio": "/questions/n5-chokai/q01-q13/q10.mp3",
+    "choices": ["Pilihan 1", "Pilihan 2", "Pilihan 3", "Pilihan 4"],
+    "answer": 4
+  },
+  {
+    "id": "q11",
+    "number": 11,
+    "section": "choukai-basic",
+    "type": "image",
+    "prompt": "Dengarkan audio, lalu pilih jawaban yang paling sesuai dengan gambar.",
+    "image": "/questions/n5-chokai/q01-q13/q11.PNG",
+    "audio": "/questions/n5-chokai/q01-q13/q11.mp3",
+    "choices": ["Pilihan 1", "Pilihan 2", "Pilihan 3", "Pilihan 4"],
+    "answer": 3
+  },
+  {
+    "id": "q12",
+    "number": 12,
+    "section": "choukai-basic",
+    "type": "image",
+    "prompt": "Dengarkan audio, lalu pilih jawaban yang paling sesuai dengan gambar.",
+    "image": "/questions/n5-chokai/q01-q13/q12.PNG",
+    "audio": "/questions/n5-chokai/q01-q13/q12.mp3",
+    "choices": ["Pilihan 1", "Pilihan 2", "Pilihan 3", "Pilihan 4"],
+    "answer": 2
+  },
+  {
+    "id": "q13",
+    "number": 13,
+    "section": "choukai-basic",
+    "type": "image",
+    "prompt": "Dengarkan audio, lalu pilih jawaban yang paling sesuai dengan gambar.",
+    "image": "/questions/n5-chokai/q01-q13/q13.PNG",
+    "audio": "/questions/n5-chokai/q01-q13/q13.mp3",
+    "choices": ["Pilihan 1", "Pilihan 2", "Pilihan 3", "Pilihan 4"],
+    "answer": 4
+  }
+]
