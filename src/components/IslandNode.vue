@@ -1,22 +1,29 @@
-<script setup>
-const props = defineProps({
-  island: {
-    type: Object,
-    required: true,
-  },
-  status: {
-    type: String,
-    required: true,
-  },
-  active: {
-    type: Boolean,
-    default: false,
-  },
+<script setup lang="ts">
+interface IslandNodeItem {
+  id: string
+  label: string
+  name: string
+  statusLabel: string
+  themeColor: string
+  position: {
+    top: string
+    left: string
+  }
+}
+
+const props = withDefaults(defineProps<{
+  island: IslandNodeItem
+  status: string
+  active?: boolean
+}>(), {
+  active: false,
 })
 
-const emit = defineEmits(['select'])
+const emit = defineEmits<{
+  select: [id: string]
+}>()
 
-function handleClick() {
+function handleClick(): void {
   if (props.status === 'locked') {
     return
   }

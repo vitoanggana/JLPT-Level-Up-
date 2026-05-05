@@ -1,49 +1,82 @@
-<script setup>
-import { computed } from 'vue'
+<script setup lang="ts">
+import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 import AppShell from '../components/AppShell.vue'
+import { getQuizDefinition } from '../data/quizzes'
 import { jlptLevels } from '../data/levels'
 import { useProgressStore } from '../stores/progress'
+import type { CategoryConfig, CategoryId, CategoryProgressMap, LevelId } from '../types'
 
 const route = useRoute()
 const router = useRouter()
 const progressStore = useProgressStore()
+const levelId = computed(() => route.params.levelId as LevelId)
+const pendingCategoryId = ref<CategoryId | null>(null)
 
 const island = computed(() => {
-  return jlptLevels.find((level) => level.id === route.params.levelId)
+  return jlptLevels.find((level) => level.id === levelId.value) ?? null
 })
 
-const categoryStateMap = computed(() => {
-  return progressStore.progress.levelScores[route.params.levelId]?.categories ?? {}
+const categoryStateMap = computed<CategoryProgressMap>(() => {
+  return progressStore.progress.levelScores[levelId.value]?.categories ?? {}
 })
 
-const islandMastery = computed(() => progressStore.getLevelScore(route.params.levelId))
+const islandMastery = computed(() => progressStore.getLevelScore(levelId.value))
 
 const completedCount = computed(() => {
   return island.value?.categories.filter((category) => categoryStateMap.value[category.id]?.completed).length ?? 0
 })
 
-const coreCategoryIds = ['moji-goi', 'bunpou-dokkai', 'choukai']
-
-const coreComplete = computed(() => {
-  return coreCategoryIds.every((categoryId) => categoryStateMap.value[categoryId]?.completed)
-})
-
-function canPlayCategory(categoryId) {
-  if (!progressStore.isUnlocked(route.params.levelId)) {
-    return false
-  }
-
-  if (categoryId !== 'exam') {
-    return true
-  }
-
-  return coreComplete.value
+type IslandNodeView = CategoryConfig & {
+  top: string
+  left: string
 }
 
-function categoryStatus(categoryId) {
-  if (categoryStateMap.value[categoryId]?.completed) {
+const islandNodes = computed<IslandNodeView[]>(() => {
+  return (island.value?.categories ?? []).map((category) => ({
+    ...category,
+    top: category.islandNode?.top || '50%',
+    left: category.islandNode?.left || '50%',
+  }))
+})
+
+const routePath = computed(() => {
+  const orderedIds: CategoryId[] = ['moji-goi', 'bunpou-dokkai', 'choukai', 'exam']
+  const orderedNodes = orderedIds
+    .map((categoryId) => islandNodes.value.find((category) => category.id === categoryId))
+    .filter((category): category is IslandNodeView => Boolean(category))
+
+  if (!orderedNodes.length) {
+    return ''
+  }
+
+  const points = orderedNodes.map((node) => ({
+    x: Number.parseFloat(node.left),
+    y: Number.parseFloat(node.top),
+  }))
+
+  return points.reduce((path, point, index) => {
+    if (index === 0) {
+      return `M ${point.x} ${point.y}`
+    }
+
+    const previous = points[index - 1]
+    const midX = (previous.x + point.x) / 2
+    return `${path} C ${midX} ${previous.y}, ${midX} ${point.y}, ${point.x} ${point.y}`
+  }, '')
+})
+
+function canPlayCategory(categoryId: CategoryId): boolean {
+  return progressStore.canAccessCategory(levelId.value, categoryId)
+}
+
+function isCategoryDone(categoryId: CategoryId): boolean {
+  return Boolean(categoryStateMap.value[categoryId]?.completed)
+}
+
+function categoryStatus(categoryId: CategoryId): 'done' | 'locked' | 'open' {
+  if (isCategoryDone(categoryId)) {
     return 'done'
   }
 
@@ -54,17 +87,54 @@ function categoryStatus(categoryId) {
   return 'open'
 }
 
-function completeCategory(categoryId) {
-  if (!canPlayCategory(categoryId)) {
+function completeCategory(categoryId: CategoryId): void {
+  if (!canPlayCategory(categoryId) || isCategoryDone(categoryId)) {
     return
   }
 
-  if (route.params.levelId === 'n5' && categoryId === 'moji-goi') {
-    router.push(`/quiz/${route.params.levelId}/${categoryId}`)
+  if (getQuizDefinition(levelId.value, categoryId)) {
+    pendingCategoryId.value = categoryId
     return
   }
 
-  progressStore.completeCategory(route.params.levelId, categoryId, 80)
+  progressStore.completeCategory(levelId.value, categoryId, 80)
+}
+
+const pendingCategory = computed(() => {
+  if (!pendingCategoryId.value) {
+    return null
+  }
+
+  return island.value?.categories.find((category) => category.id === pendingCategoryId.value) ?? null
+})
+
+const pendingDurationMinutes = computed(() => {
+  if (pendingCategoryId.value === 'moji-goi') {
+    return 30
+  }
+
+  if (pendingCategoryId.value === 'bunpou-dokkai') {
+    return 45
+  }
+
+  if (pendingCategoryId.value === 'choukai') {
+    return 60
+  }
+
+  return 0
+})
+
+function closeStartDialog(): void {
+  pendingCategoryId.value = null
+}
+
+function startQuiz(): void {
+  if (!pendingCategoryId.value) {
+    return
+  }
+
+  router.push(`/quiz/${levelId.value}/${pendingCategoryId.value}`)
+  pendingCategoryId.value = null
 }
 </script>
 
@@ -75,20 +145,18 @@ function completeCategory(categoryId) {
         <div class="island-map-panel">
           <div class="island-map-fill" :style="{ background: island.themeColor }">
             <svg
-              class="island-map-shape"
-              viewBox="0 0 1020 780"
+              class="island-route-map"
+              viewBox="0 0 100 100"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
               aria-hidden="true"
             >
-              <path :d="island.islandSilhouette || island.mapRegion.path" fill="currentColor" />
+              <path class="island-route-map__back" :d="routePath" pathLength="100" />
+              <path class="island-route-map__front" :d="routePath" pathLength="100" />
             </svg>
 
-            <div class="island-route island-route--one"></div>
-            <div class="island-route island-route--two"></div>
-
             <button
-              v-for="category in island.categories"
+              v-for="category in islandNodes"
               :key="category.id"
               class="island-node-card"
               :class="[
@@ -99,12 +167,12 @@ function completeCategory(categoryId) {
                 top: category.islandNode?.top || '50%',
                 left: category.islandNode?.left || '50%',
               }"
-              :disabled="!canPlayCategory(category.id)"
+              :disabled="!canPlayCategory(category.id) || categoryStatus(category.id) === 'done'"
               @click="completeCategory(category.id)"
             >
               <span class="island-node-card__label">{{ category.title }}</span>
               <span class="island-node-card__count">
-                {{ categoryStatus(category.id) === 'done' ? 'Done' : `${category.questions}` }}
+                {{ categoryStatus(category.id) === 'done' ? 'Selesai' : `${category.questions}` }}
               </span>
             </button>
 
@@ -113,14 +181,14 @@ function completeCategory(categoryId) {
         </div>
 
         <div class="island-side-card">
-          <p class="eyebrow">Island Overview</p>
-          <h1 class="title" style="font-size: 40px;">{{ island.label }} Island</h1>
+          <p class="eyebrow">Ringkasan Pulau</p>
+          <h1 class="title" style="font-size: 40px;">Pulau {{ island.label }}</h1>
           <p class="small-note">{{ island.name }}</p>
 
           <div class="progress-bar" style="margin-top: 16px;">
             <span :style="{ width: `${islandMastery}%` }" />
           </div>
-          <p class="small-note">{{ completedCount }} / {{ island.categories.length }} stage clear</p>
+          <p class="small-note">{{ completedCount }} / {{ island.categories.length }} tahap selesai</p>
 
           <div class="milestone-list" style="margin-top: 18px;">
             <div v-for="milestone in island.milestones" :key="milestone">
@@ -128,9 +196,15 @@ function completeCategory(categoryId) {
             </div>
           </div>
 
+          <div class="milestone-list" style="margin-top: 18px;">
+            <div v-for="category in island.categories" :key="`${category.id}-requirement`">
+              {{ category.title }}: minimum {{ category.passingCorrect }}/{{ category.questions }} benar
+            </div>
+          </div>
+
           <div class="button-row" style="margin-top: 20px;">
             <button class="btn btn-secondary" type="button" @click="router.push('/map')">
-              Back to Map
+              Kembali ke Peta
             </button>
           </div>
         </div>
@@ -138,9 +212,31 @@ function completeCategory(categoryId) {
     </div>
 
     <div v-else class="panel empty-state">
-      <h1>Island tidak ditemukan</h1>
+      <h1>Pulau tidak ditemukan</h1>
       <p class="small-note">Level yang dipilih belum ada di route saat ini.</p>
-      <RouterLink class="btn btn-primary" to="/map">Balik ke Map</RouterLink>
+      <RouterLink class="btn btn-primary" to="/map">Kembali ke Peta</RouterLink>
+    </div>
+
+    <div v-if="pendingCategory" class="dialog-backdrop" @click.self="closeStartDialog">
+      <div class="dialog-card">
+        <p class="eyebrow">Konfirmasi Mulai</p>
+        <h2 class="title" style="font-size: 30px;">Siap mengerjakan {{ pendingCategory.title }} {{ levelId.toUpperCase() }}?</h2>
+        <p class="small-note" style="margin-top: 12px;">
+          Jika iya, timer akan mulai ketika kamu menekan tombol Ready.
+        </p>
+        <p class="small-note">
+          Waktu yang tersedia: {{ pendingDurationMinutes }} menit.
+        </p>
+
+        <div class="button-row" style="margin-top: 20px; justify-content: center;">
+          <button class="btn btn-secondary" type="button" @click="closeStartDialog">
+            Batal
+          </button>
+          <button class="btn btn-primary" type="button" @click="startQuiz">
+            Ready
+          </button>
+        </div>
+      </div>
     </div>
   </AppShell>
 </template>
