@@ -1,0 +1,201 @@
+import type { CategoryConfig, ProgressState, LevelConfig } from '../types'
+
+type CategoryInput = Omit<CategoryConfig, 'unlockAfter'> & { unlockAfter?: CategoryConfig['unlockAfter'] }
+
+function createCategory({ id, title, questions, description, islandNode, passingCorrect, unlockAfter = [] }: CategoryInput): CategoryConfig {
+  return {
+    id,
+    title,
+    questions,
+    description,
+    islandNode,
+    passingCorrect,
+    unlockAfter,
+  }
+}
+
+export const jlptLevels: LevelConfig[] = [
+  {
+    id: 'n5',
+    label: 'N5',
+    name: 'Pulau Langkah Pertama',
+    statusLabel: 'Terbuka untuk semua petualang baru',
+    themeColor: '#ff847d',
+    mapRegion: {
+      path: 'M10 520 C24 505, 49 502, 71 496 C93 490, 111 476, 133 472 C152 468, 175 472, 188 487 C200 500, 200 520, 191 536 C182 551, 166 561, 162 578 C158 596, 168 616, 158 632 C147 649, 127 661, 107 667 C85 674, 61 672, 44 657 C28 642, 29 619, 20 602 C10 586, -8 575, -12 557 C-16 541, -6 530, 10 520 Z',
+      labelX: 88,
+      labelY: 576,
+      focusX: 90,
+      focusY: 564,
+      translateX: 0,
+      translateY: 24,
+      scale: 2.25,
+    },
+    unlockRequirement: 'Pulau awal bawaan',
+    categories: [
+      createCategory({
+        id: 'moji-goi',
+        title: 'Moji Goi',
+        questions: 20,
+        description: '20 soal acak dari bank soal moji-goi N5.',
+        islandNode: { top: '74%', left: '34%', size: 'medium' },
+        passingCorrect: 18,
+      }),
+      createCategory({
+        id: 'bunpou-dokkai',
+        title: 'Bunpou-Dokkai',
+        questions: 30,
+        description: 'Tantangan gabungan tata bahasa dan dokkai.',
+        islandNode: { top: '56%', left: '60%', size: 'medium' },
+        passingCorrect: 25,
+        unlockAfter: ['moji-goi'],
+      }),
+      createCategory({
+        id: 'choukai',
+        title: 'Choukai',
+        questions: 20,
+        description: 'Tantangan mendengar untuk situasi sehari-hari tingkat pemula.',
+        islandNode: { top: '27%', left: '27%', size: 'medium' },
+        passingCorrect: 18,
+        unlockAfter: ['bunpou-dokkai'],
+      }),
+      createCategory({
+        id: 'exam',
+        title: 'Exam',
+        questions: 35,
+        description: 'Ujian campuran: 10 moji-goi, 15 bunpou-dokkai, 10 choukai.',
+        islandNode: { top: '12%', left: '66%', size: 'large' },
+        passingCorrect: 33,
+        unlockAfter: ['moji-goi', 'bunpou-dokkai', 'choukai'],
+      }),
+    ],
+    islandSilhouette:
+      'M211 58 C301 25, 361 69, 401 68 C439 67, 478 46, 541 49 C618 52, 694 29, 738 48 C777 65, 789 114, 820 146 C860 187, 938 192, 964 237 C986 275, 1017 329, 996 347 C975 365, 933 387, 909 405 C885 423, 906 469, 887 493 C867 516, 831 541, 816 562 C801 584, 793 626, 775 658 C758 688, 738 725, 710 724 C681 723, 654 690, 627 694 C600 698, 596 744, 566 754 C533 765, 485 761, 455 750 C424 739, 426 694, 398 688 C369 682, 335 721, 304 713 C274 705, 270 651, 252 614 C234 576, 208 533, 213 505 C218 477, 241 459, 245 438 C249 417, 207 381, 201 352 C196 324, 197 293, 180 278 C163 263, 137 289, 116 305 C96 321, 74 353, 53 346 C31 339, 16 295, 14 259 C11 218, -4 124, 18 106 C40 88, 129 88, 211 58 Z',
+    milestones: [
+      'Selesaikan moji-goi, bunpou-dokkai, dan choukai terlebih dahulu.',
+      'Node ujian campuran terbuka setelah tiga kategori inti selesai.',
+      'Capai setidaknya 70 persen total mastery.',
+      'Buka rute ke pulau N4.',
+    ],
+  },
+  {
+    id: 'n4',
+    label: 'N4',
+    name: 'Pulau Jembatan',
+    statusLabel: 'Terbuka setelah menamatkan N5',
+    themeColor: '#fda38c',
+    mapRegion: {
+      path: 'M186 450 C206 441, 228 432, 251 429 C275 426, 300 429, 324 426 C348 423, 372 414, 396 414 C416 414, 438 422, 452 437 C461 446, 461 460, 453 469 C444 478, 429 481, 415 482 C399 484, 384 486, 369 491 C351 497, 336 507, 317 509 C295 511, 274 506, 252 507 C230 508, 207 513, 185 509 C168 506, 152 498, 141 485 C132 474, 169 457, 186 450 Z',
+      labelX: 286,
+      labelY: 470,
+      focusX: 294,
+      focusY: 462,
+      translateX: -16,
+      translateY: 16,
+      scale: 1.9,
+    },
+    unlockRequirement: 'Selesaikan semua kategori N5',
+    categories: [
+      createCategory({ id: 'moji-goi', title: 'Moji Goi', questions: 20, description: 'Tantangan kanji dan kosakata yang lebih luas.', passingCorrect: 18 }),
+      createCategory({ id: 'bunpou-dokkai', title: 'Bunpou-Dokkai', questions: 30, description: 'Gabungan tata bahasa dan dokkai untuk N4.', passingCorrect: 25, unlockAfter: ['moji-goi'] }),
+      createCategory({ id: 'choukai', title: 'Choukai', questions: 20, description: 'Tantangan mendengar dengan tempo lebih cepat.', passingCorrect: 18, unlockAfter: ['bunpou-dokkai'] }),
+      createCategory({ id: 'exam', title: 'Exam', questions: 35, description: 'Ujian campuran untuk jalur sertifikasi N4.', passingCorrect: 33, unlockAfter: ['moji-goi', 'bunpou-dokkai', 'choukai'] }),
+    ],
+    milestones: [
+      'Pantau pacing stamina dan tingkat kesulitan.',
+      'Siapkan profil pemain untuk rank matching nanti.',
+    ],
+  },
+  {
+    id: 'n3',
+    label: 'N3',
+    name: 'Pulau Tengah Perjalanan',
+    statusLabel: 'Titik progres pertengahan permainan',
+    themeColor: '#ffd352',
+    mapRegion: {
+      path: 'M500 366 C524 354, 547 341, 571 331 C594 321, 622 323, 647 320 C673 317, 700 316, 723 327 C742 336, 754 352, 772 360 C789 367, 808 379, 809 398 C809 416, 795 430, 783 442 C770 454, 760 468, 744 476 C726 484, 705 484, 686 489 C666 494, 647 504, 627 505 C607 506, 590 498, 571 498 C551 499, 531 507, 512 501 C492 495, 477 479, 463 465 C450 453, 435 442, 433 424 C431 406, 442 392, 457 383 C470 375, 485 373, 500 366 Z',
+      labelX: 628,
+      labelY: 430,
+      focusX: 630,
+      focusY: 420,
+      translateX: 22,
+      translateY: -8,
+      scale: 1.75,
+    },
+    unlockRequirement: 'Selesaikan semua kategori N4',
+    categories: [
+      createCategory({ id: 'moji-goi', title: 'Moji Goi', questions: 20, description: 'Disiapkan untuk pengembangan konten berikutnya.', passingCorrect: 18 }),
+      createCategory({ id: 'bunpou-dokkai', title: 'Bunpou-Dokkai', questions: 30, description: 'Disiapkan untuk pengembangan konten berikutnya.', passingCorrect: 25, unlockAfter: ['moji-goi'] }),
+      createCategory({ id: 'choukai', title: 'Choukai', questions: 20, description: 'Disiapkan untuk pengembangan konten berikutnya.', passingCorrect: 18, unlockAfter: ['bunpou-dokkai'] }),
+      createCategory({ id: 'exam', title: 'Exam', questions: 35, description: 'Disiapkan untuk pengembangan konten berikutnya.', passingCorrect: 33, unlockAfter: ['moji-goi', 'bunpou-dokkai', 'choukai'] }),
+    ],
+    milestones: ['Disiapkan untuk pengembangan konten berikutnya.'],
+  },
+  {
+    id: 'n2',
+    label: 'N2',
+    name: 'Pulau Badai',
+    statusLabel: 'Rute tingkat lanjut',
+    themeColor: '#53b4b0',
+    mapRegion: {
+      path: 'M818 210 C833 198, 851 186, 871 182 C891 178, 912 183, 927 197 C942 211, 952 230, 957 250 C962 270, 961 292, 953 311 C946 329, 936 346, 933 365 C930 381, 931 399, 922 413 C912 428, 894 436, 876 436 C858 436, 843 425, 831 412 C819 399, 810 382, 801 366 C791 350, 779 335, 775 316 C770 295, 777 276, 781 256 C785 240, 782 220, 794 208 C801 201, 809 206, 818 210 Z',
+      labelX: 865,
+      labelY: 328,
+      focusX: 864,
+      focusY: 314,
+      translateX: 20,
+      translateY: -48,
+      scale: 1.82,
+    },
+    unlockRequirement: 'Selesaikan semua kategori N3',
+    categories: [
+      createCategory({ id: 'moji-goi', title: 'Moji Goi', questions: 20, description: 'Disiapkan untuk pengembangan konten berikutnya.', passingCorrect: 18 }),
+      createCategory({ id: 'bunpou-dokkai', title: 'Bunpou-Dokkai', questions: 30, description: 'Disiapkan untuk pengembangan konten berikutnya.', passingCorrect: 25, unlockAfter: ['moji-goi'] }),
+      createCategory({ id: 'choukai', title: 'Choukai', questions: 20, description: 'Disiapkan untuk pengembangan konten berikutnya.', passingCorrect: 18, unlockAfter: ['bunpou-dokkai'] }),
+      createCategory({ id: 'exam', title: 'Exam', questions: 35, description: 'Disiapkan untuk pengembangan konten berikutnya.', passingCorrect: 33, unlockAfter: ['moji-goi', 'bunpou-dokkai', 'choukai'] }),
+    ],
+    milestones: ['Disiapkan untuk pengembangan konten berikutnya.'],
+  },
+  {
+    id: 'n1',
+    label: 'N1',
+    name: 'Puncak Master',
+    statusLabel: 'Pulau terakhir',
+    themeColor: '#78c4ef',
+    mapRegion: {
+      path: 'M818 66 C835 50, 858 42, 882 43 C906 44, 926 55, 944 69 C964 84, 981 102, 1002 115 C1022 127, 1047 128, 1066 139 C1079 147, 1087 162, 1081 176 C1075 189, 1058 195, 1042 195 C1025 195, 1008 190, 991 191 C974 192, 959 200, 942 201 C922 202, 904 198, 886 191 C868 184, 850 178, 832 172 C814 166, 797 156, 786 141 C777 129, 780 113, 788 100 C796 88, 804 76, 818 66 Z',
+      labelX: 994,
+      labelY: 145,
+      focusX: 986,
+      focusY: 136,
+      translateX: 28,
+      translateY: -84,
+      scale: 1.95,
+    },
+    unlockRequirement: 'Selesaikan semua kategori N2',
+    categories: [
+      createCategory({ id: 'moji-goi', title: 'Moji Goi', questions: 20, description: 'Disiapkan untuk pengembangan konten berikutnya.', passingCorrect: 18 }),
+      createCategory({ id: 'bunpou-dokkai', title: 'Bunpou-Dokkai', questions: 30, description: 'Disiapkan untuk pengembangan konten berikutnya.', passingCorrect: 25, unlockAfter: ['moji-goi'] }),
+      createCategory({ id: 'choukai', title: 'Choukai', questions: 20, description: 'Disiapkan untuk pengembangan konten berikutnya.', passingCorrect: 18, unlockAfter: ['bunpou-dokkai'] }),
+      createCategory({ id: 'exam', title: 'Exam', questions: 35, description: 'Disiapkan untuk pengembangan konten berikutnya.', passingCorrect: 33, unlockAfter: ['moji-goi', 'bunpou-dokkai', 'choukai'] }),
+    ],
+    milestones: ['Disiapkan untuk pengembangan konten berikutnya.'],
+  },
+]
+
+export const starterProgress: ProgressState = {
+  unlockedLevels: ['n5'],
+  completedLevels: [],
+  selectedLevel: 'n5',
+  levelScores: {
+    n5: {
+      mastery: 0,
+      categories: {
+        'moji-goi': { completed: false, score: 0, correctCount: 0 },
+        'bunpou-dokkai': { completed: false, score: 0, correctCount: 0 },
+        choukai: { completed: false, score: 0, correctCount: 0 },
+        exam: { completed: false, score: 0, correctCount: 0 },
+      },
+    },
+  },
+}

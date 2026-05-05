@@ -1,37 +1,75 @@
-<script setup>
+<script setup lang="ts">
+import { ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+
 import AppShell from '../components/AppShell.vue'
+import { useAuthStore } from '../stores/auth'
+
+const route = useRoute()
+const router = useRouter()
+const authStore = useAuthStore()
+
+const loginId = ref('user')
+const password = ref('user')
+const feedback = ref('')
+const errorMessage = ref('')
+
+function handleLogin(): void {
+  errorMessage.value = ''
+  feedback.value = ''
+
+  const result = authStore.login(loginId.value, password.value)
+
+  if (!result.success) {
+    errorMessage.value = result.message
+    return
+  }
+
+  feedback.value = result.message
+  router.push(typeof route.query.redirect === 'string' ? route.query.redirect : '/map')
+}
 </script>
 
 <template>
   <AppShell>
-    <div class="section-head">
-      <div>
-        <p class="eyebrow">Week 1</p>
-        <h1 class="title">Auth flow placeholder</h1>
-        <p class="subtitle">
-          Untuk week 1 kita belum butuh backend dulu. Halaman ini cukup jadi penanda alur login dan
-          register sebelum nanti disambung ke Supabase atau backend sendiri.
-        </p>
-      </div>
-    </div>
+    <section class="auth-screen">
+      <div class="auth-stack">
+        <div class="section-head auth-head">
+          <div>
+            <p class="eyebrow">Minggu 1</p>
+            <h1 class="title">Mock login sementara</h1>
+            <p class="subtitle">
+              Sementara ini autentikasi memakai database mock lokal. Nanti gampang diganti ke Supabase atau backend sendiri.
+            </p>
+          </div>
+        </div>
 
-    <div class="panel auth-card">
-      <div class="form-stack">
-        <label class="field">
-          <span>Email</span>
-          <input type="email" placeholder="adventurer@jlpt.quest" />
-        </label>
+        <div class="panel auth-card auth-card--wide">
+          <div class="form-stack">
+            <label class="field">
+              <span>ID</span>
+              <input v-model="loginId" type="text" placeholder="admin atau user" />
+            </label>
 
-        <label class="field">
-          <span>Password</span>
-          <input type="password" placeholder="********" />
-        </label>
+            <label class="field">
+              <span>Password</span>
+              <input v-model="password" type="password" placeholder="********" />
+            </label>
 
-        <div class="button-row">
-          <button class="btn btn-primary" type="button">Mock Login</button>
-          <RouterLink class="btn btn-secondary" to="/map">Skip ke Map</RouterLink>
+            <p v-if="errorMessage" class="auth-message auth-message--error">{{ errorMessage }}</p>
+            <p v-else-if="feedback" class="auth-message auth-message--success">{{ feedback }}</p>
+
+            <div class="button-row">
+              <button class="btn btn-primary" type="button" @click="handleLogin">Login</button>
+            </div>
+
+            <div class="auth-seed-list">
+              <div><strong>Admin</strong>: id `admin` / pw `admin`</div>
+              <div><strong>User</strong>: id `user` / pw `user`</div>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+    </section>
   </AppShell>
 </template>
