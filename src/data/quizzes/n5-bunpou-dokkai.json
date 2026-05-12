@@ -168,7 +168,7 @@
     "type": "image",
     "prompt": "Susun kata-kata yang tersedia, lalu pilih kata yang tepat untuk posisi bintang.",
     "image": "/questions/n5-bunpou-dokkai/q19.PNG",
-    "answer": 1
+    "answer": 4
   },
   {
     "id": "q20",
@@ -177,7 +177,7 @@
     "type": "image",
     "prompt": "Susun kata-kata yang tersedia, lalu pilih kata yang tepat untuk posisi bintang.",
     "image": "/questions/n5-bunpou-dokkai/q20.PNG",
-    "answer": 3
+    "answer": 2
   },
   {
     "id": "q21",
@@ -206,9 +206,9 @@
     ],
     "questionNumbers": [22, 23, 24, 25, 26],
     "answers": {
-      "22": 2,
+      "22": 4,
       "23": 2,
-      "24": 3,
+      "24": 4,
       "25": 3,
       "26": 1
     }
