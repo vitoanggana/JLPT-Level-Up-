@@ -377,10 +377,12 @@ function stopTimer(): void {
 }
 
 function setQuestionAudioRef(audioKey: string, element: HTMLAudioElement | null): void {
-  questionAudioRefs.value = {
-    ...questionAudioRefs.value,
-    [audioKey]: element,
+  if (questionAudioRefs.value[audioKey] === element) {
+    return
   }
+
+
+  questionAudioRefs.value[audioKey] = element
 }
 
 function getRemainingQuestionAudioPlays(audioKey: string): number {
