@@ -121,6 +121,10 @@ const pendingDurationMinutes = computed(() => {
     return 60
   }
 
+  if (pendingCategoryId.value === 'exam') {
+    return 135
+  }
+
   return 0
 })
 

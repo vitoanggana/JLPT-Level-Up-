@@ -28,19 +28,6 @@ function shuffle<T>(array: T[]): T[] {
   return clone
 }
 
-function renumberQuestion(question: QuizQuestion, number: number): QuizQuestion {
-  return {
-    ...question,
-    number,
-  }
-}
-
-function buildRandomBlock(questions: QuizQuestion[], startNumber: number, takeCount: number): QuizQuestion[] {
-  return shuffle(questions)
-    .slice(0, takeCount)
-    .map((question, index) => renumberQuestion(question, startNumber + index))
-}
-
 export function getQuizDefinition(levelId: LevelId, categoryId: CategoryId): QuizDefinition | null {
   if (levelId === 'n5' && categoryId === 'moji-goi') {
     return {
@@ -71,14 +58,19 @@ export function getQuizDefinition(levelId: LevelId, categoryId: CategoryId): Qui
 
     return {
       title: 'N5 Choukai',
-      subtitle: '20 soal per blok. Random hanya di dalam tiap mondai, dan tiap audio hanya bisa diputar maksimal 2 kali.',
-      questionCount: 20,
-      questions: [
-        ...buildRandomBlock(mondaiOneAndTwoPool, 1, 10),
-        ...buildRandomBlock(mondaiThreePool, 11, 5),
-        ...buildRandomBlock(mondaiFourPool, 16, 5),
-      ],
+      subtitle: '10 soal acak. tiap audio hanya bisa diputar maksimal 2 kali.',
+      questionCount: 10,
+      questions: shuffle(n5ChoukaiQuestions).slice(0, 10),
       introExample: n5ChoukaiIntroExample,
+    }
+  }
+
+  if (levelId === 'n5' && categoryId === 'exam') {
+    return {
+      title: 'N5 Exam',
+      subtitle: '35 soal campuran: 10 moji-goi, 15 bunpou-dokkai, 10 choukai.',
+      questionCount: 35,
+      questions: createN5ExamQuestions(),
     }
   }
 
