@@ -11,8 +11,7 @@ import AppShell from '../components/AppShell.vue'
             <p class="eyebrow">JLPT Adventure</p>
             <h1 class="title">Naik level bahasa Jepang lewat petualangan pulau.</h1>
             <p class="subtitle">
-              Mode solo jadi inti dulu: pemain menjelajah peta Jepang, menyelesaikan kuis
-              per kategori, lalu membuka pulau berikutnya dari N5 sampai N1.
+              Jadi barudak ini website teh sangat bagus intinya mah support saya terus jangan israel.
             </p>
 
             <div class="button-row hero-copy__actions">
@@ -23,16 +22,16 @@ import AppShell from '../components/AppShell.vue'
 
           <div class="stats-row hero-copy__stats">
             <div class="stat-card hero-stat-card">
-              <span class="hero-stat-card__label">Minggu 1</span>
-              <strong>Inti Peta</strong>
+              <span class="hero-stat-card__label">Scoreboard</span>
+              <strong>Disini nanti ada scoreboard overall</strong>
             </div>
             <div class="stat-card hero-stat-card">
               <span class="hero-stat-card__label">MVP</span>
-              <strong>N5 Dulu</strong>
+              <strong>ntar disini diliatin siapa MVP (yang paling jago), tpi ini belum aktif ya fiturnya</strong>
             </div>
             <div class="stat-card hero-stat-card">
               <span class="hero-stat-card__label">Target</span>
-              <strong>Buka Rantai</strong>
+              <strong>gatau</strong>
             </div>
           </div>
         </div>
