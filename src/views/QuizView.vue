@@ -75,7 +75,7 @@ const quizDurationSeconds = computed(() => {
   }
 
   if (categoryId.value === 'exam') {
-    return 135 * 60
+    return 60 * 60
   }
 
   return 0
@@ -164,7 +164,9 @@ const currentQuestionLabel = computed(() => {
 })
 
 const questionInstruction = computed(() => {
-  if (categoryId.value === 'choukai') {
+  const questionCategory = getQuestionCategory(currentQuestion.value)
+
+  if (questionCategory === 'choukai') {
     return {
       title: 'Dengarkan audio lalu pilih gambar yang benar',
       description: 'Tiap audio hanya bisa diputar maksimal 2 kali. Kamu boleh langsung menjawab dan lanjut, tetapi peta soal terkunci selama audio aktif.',

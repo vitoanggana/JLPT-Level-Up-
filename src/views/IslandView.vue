@@ -88,7 +88,7 @@ function categoryStatus(categoryId: CategoryId): 'done' | 'locked' | 'open' {
 }
 
 function completeCategory(categoryId: CategoryId): void {
-  if (!canPlayCategory(categoryId) || isCategoryDone(categoryId)) {
+  if (!canPlayCategory(categoryId)) {
     return
   }
 
@@ -122,7 +122,7 @@ const pendingDurationMinutes = computed(() => {
   }
 
   if (pendingCategoryId.value === 'exam') {
-    return 135
+    return 60
   }
 
   return 0
@@ -171,7 +171,7 @@ function startQuiz(): void {
                 top: category.islandNode?.top || '50%',
                 left: category.islandNode?.left || '50%',
               }"
-              :disabled="!canPlayCategory(category.id) || categoryStatus(category.id) === 'done'"
+              :disabled="!canPlayCategory(category.id)"
               @click="completeCategory(category.id)"
             >
               <span class="island-node-card__label">{{ category.title }}</span>
