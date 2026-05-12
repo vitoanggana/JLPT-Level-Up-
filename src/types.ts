@@ -39,6 +39,7 @@ export interface QuizIntroExample {
 export interface SingleAnswerQuestion {
   id: string | number
   number?: number
+  categoryId?: CategoryId
   section: QuizSection
   type: QuizQuestionType
   prompt: string
@@ -53,6 +54,7 @@ export interface SingleAnswerQuestion {
 export interface MultiAnswerQuestion {
   id: string | number
   number?: number
+  categoryId?: CategoryId
   section: QuizSection
   type: QuizQuestionType
   prompt: string

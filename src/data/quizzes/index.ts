@@ -28,6 +28,92 @@ function shuffle<T>(array: T[]): T[] {
   return clone
 }
 
+function withCategoryId(categoryId: CategoryId, question: QuizQuestion): QuizQuestion {
+  return {
+    ...question,
+    id: `${categoryId}-${String(question.id)}`,
+    categoryId,
+  }
+}
+
+function sortQuestionsByNumber(questions: QuizQuestion[]): QuizQuestion[] {
+  return [...questions].sort((left, right) => {
+    const leftNumber = left.number ?? Number(left.id)
+    const rightNumber = right.number ?? Number(right.id)
+
+    return leftNumber - rightNumber
+  })
+}
+
+function createN5ChoukaiFullSet(): QuizQuestion[] {
+  const firstBlock = shuffle(n5ChoukaiQuestions.filter((question) => {
+    const number = question.number ?? 0
+    return number >= 1 && number <= 13
+  })).slice(0, 10)
+
+  const secondBlock = shuffle(n5ChoukaiQuestions.filter((question) => {
+    const number = question.number ?? 0
+    return number >= 14 && number <= 18
+  })).slice(0, 5)
+
+  const thirdBlock = shuffle(n5ChoukaiQuestions.filter((question) => {
+    const number = question.number ?? 0
+    return number >= 19 && number <= 24
+  })).slice(0, 5)
+
+  return [...firstBlock, ...secondBlock, ...thirdBlock]
+}
+
+function createN5ExamQuestions(): QuizQuestion[] {
+  const mojiQuestions = shuffle(n5MojiGoiQuestions).slice(0, 10)
+
+  const bunpouGrammarQuestions = sortQuestionsByNumber(
+    shuffle(n5BunpouDokkaiQuestions.filter((question) => {
+      const number = question.number ?? 0
+      return number >= 1 && number <= 21
+    })).slice(0, 7),
+  )
+  const bunpouPassageFill = n5BunpouDokkaiQuestions.find((question) => String(question.id) === 'q22-26')
+  const bunpouReadingQuestions = shuffle(
+    n5BunpouDokkaiQuestions.filter((question) => ['q27', 'q28', 'q29', 'q32'].includes(String(question.id))),
+  ).slice(0, 1)
+  const bunpouReadingGroup = n5BunpouDokkaiQuestions.find((question) => String(question.id) === 'q30-31')
+
+  const choukaiBasic = sortQuestionsByNumber(
+    shuffle(n5ChoukaiQuestions.filter((question) => {
+      const number = question.number ?? 0
+      return number >= 1 && number <= 13
+    })).slice(0, 5),
+  )
+  const choukaiMondai3 = sortQuestionsByNumber(
+    shuffle(n5ChoukaiQuestions.filter((question) => {
+      const number = question.number ?? 0
+      return number >= 14 && number <= 18
+    })).slice(0, 3),
+  )
+  const choukaiMondai4 = sortQuestionsByNumber(
+    shuffle(n5ChoukaiQuestions.filter((question) => {
+      const number = question.number ?? 0
+      return number >= 19 && number <= 24
+    })).slice(0, 2),
+  )
+
+  const bunpouQuestions = [
+    ...bunpouGrammarQuestions,
+    ...(bunpouPassageFill ? [bunpouPassageFill] : []),
+    ...bunpouReadingQuestions,
+    ...(bunpouReadingGroup ? [bunpouReadingGroup] : []),
+  ]
+
+  const examQuestions = [
+    ...mojiQuestions.map((question) => withCategoryId('moji-goi', question)),
+    ...bunpouQuestions.map((question) => withCategoryId('bunpou-dokkai', question)),
+    ...[...choukaiBasic, ...choukaiMondai3, ...choukaiMondai4].map((question) => withCategoryId('choukai', question)),
+  ]
+
+  return examQuestions
+}
+
 export function getQuizDefinition(levelId: LevelId, categoryId: CategoryId): QuizDefinition | null {
   if (levelId === 'n5' && categoryId === 'moji-goi') {
     return {
@@ -54,10 +140,19 @@ export function getQuizDefinition(levelId: LevelId, categoryId: CategoryId): Qui
   if (levelId === 'n5' && categoryId === 'choukai') {
     return {
       title: 'N5 Choukai',
-      subtitle: '10 soal acak. tiap audio hanya bisa diputar maksimal 2 kali.',
-      questionCount: 10,
-      questions: shuffle(n5ChoukaiQuestions).slice(0, 10),
+      subtitle: '20 soal acak bertahap. tiap audio hanya bisa diputar maksimal 2 kali.',
+      questionCount: 20,
+      questions: createN5ChoukaiFullSet(),
       introExample: n5ChoukaiIntroExample,
+    }
+  }
+
+  if (levelId === 'n5' && categoryId === 'exam') {
+    return {
+      title: 'N5 Exam',
+      subtitle: '35 soal campuran: 10 moji-goi, 15 bunpou-dokkai, 10 choukai.',
+      questionCount: 35,
+      questions: createN5ExamQuestions(),
     }
   }
 

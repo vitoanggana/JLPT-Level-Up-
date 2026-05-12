@@ -119,7 +119,7 @@ function openIsland(levelId: LevelId): void {
             <p class="eyebrow">Peta Progress</p>
             <h1 class="title">Pilih pulau JLPT-mu</h1>
             <p class="subtitle">
-              Sekarang shape tiap pulau mengikuti SVG asli, jadi area klik, hover, dan preview level terasa lebih presisi.
+              Petualangan Belajar JLPT menunggu kamuhhhh (semoga lulus beneran yh)
             </p>
           </div>
 
@@ -138,37 +138,39 @@ function openIsland(levelId: LevelId): void {
               xmlns="http://www.w3.org/2000/svg"
               aria-label="JLPT island map"
             >
-              <g
-                v-for="level in mapLevels"
-                :key="level.id"
-                class="jlpt-map-region"
-                :class="[
-                  `jlpt-map-region--${getIslandStatus(level.id)}`,
-                  { 'jlpt-map-region--active': previewIsland.id === level.id },
-                ]"
-                tabindex="0"
-                role="button"
-                :aria-label="`Buka ${level.label}`"
-                @mouseenter="setPreview(level.id)"
-                @focus="setPreview(level.id)"
-                @click="openIsland(level.id)"
-                @keydown.enter.prevent="openIsland(level.id)"
-                @keydown.space.prevent="openIsland(level.id)"
-              >
-                <path
-                  v-for="(shapePath, pathIndex) in level.svg.paths"
-                  :key="`${level.id}-${pathIndex}`"
-                  class="jlpt-map-region__shape"
-                  :d="shapePath"
-                  :fill="level.themeColor"
-                />
-                <text
-                  class="jlpt-map-region__label"
-                  :x="level.svg.labelX"
-                  :y="level.svg.labelY"
+              <g transform="translate(-235 115) scale(1.28)">
+                <g
+                  v-for="level in mapLevels"
+                  :key="level.id"
+                  class="jlpt-map-region"
+                  :class="[
+                    `jlpt-map-region--${getIslandStatus(level.id)}`,
+                    { 'jlpt-map-region--active': previewIsland.id === level.id },
+                  ]"
+                  tabindex="0"
+                  role="button"
+                  :aria-label="`Buka ${level.label}`"
+                  @mouseenter="setPreview(level.id)"
+                  @focus="setPreview(level.id)"
+                  @click="openIsland(level.id)"
+                  @keydown.enter.prevent="openIsland(level.id)"
+                  @keydown.space.prevent="openIsland(level.id)"
                 >
-                  {{ level.label }}
-                </text>
+                  <path
+                    v-for="(shapePath, pathIndex) in level.svg.paths"
+                    :key="`${level.id}-${pathIndex}`"
+                    class="jlpt-map-region__shape"
+                    :d="shapePath"
+                    :fill="level.themeColor"
+                  />
+                  <text
+                    class="jlpt-map-region__label"
+                    :x="level.svg.labelX"
+                    :y="level.svg.labelY"
+                  >
+                    {{ level.label }}
+                  </text>
+                </g>
               </g>
             </svg>
 

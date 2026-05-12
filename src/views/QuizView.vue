@@ -46,7 +46,7 @@ let timerId: number | null = null
 const currentQuestion = computed<QuizQuestion | null>(() => quizDefinition.value?.questions[currentIndex.value] ?? null)
 const totalCards = computed(() => quizDefinition.value?.questions.length ?? 0)
 const introExample = computed<QuizIntroExample | null>(() => quizDefinition.value?.introExample ?? null)
-const showIntroExample = computed(() => categoryId.value === 'choukai' && Boolean(introExample.value) && !introCompleted.value)
+const showIntroExample = computed(() => Boolean(introExample.value) && !introCompleted.value)
 const categoryConfig = computed<CategoryConfig | null>(() => {
   return jlptLevels.find((level) => level.id === levelId.value)?.categories.find((category) => category.id === categoryId.value) ?? null
 })
@@ -74,6 +74,10 @@ const quizDurationSeconds = computed(() => {
     return 60 * 60
   }
 
+  if (categoryId.value === 'exam') {
+    return 135 * 60
+  }
+
   return 0
 })
 
@@ -91,14 +95,39 @@ function getQuestionKeys(question: QuizQuestion | null): string[] {
   }
 
   if (isMultiAnswerQuestion(question)) {
-    return question.questionNumbers.map((number) => String(number))
+    return question.questionNumbers.map((number) => getAnswerKey(question, number))
   }
 
-  if (question.number != null) {
-    return [String(question.number)]
+  return [getAnswerKey(question)]
+}
+
+function getQuestionCategory(question: QuizQuestion | null): CategoryId {
+  return question?.categoryId ?? categoryId.value
+}
+
+function getCategoryLabel(targetCategoryId: CategoryId): string {
+  if (targetCategoryId === 'moji-goi') {
+    return 'Moji Goi'
   }
 
-  return [String(question.id)]
+  if (targetCategoryId === 'bunpou-dokkai') {
+    return 'Bunpou-Dokkai'
+  }
+
+  if (targetCategoryId === 'choukai') {
+    return 'Choukai'
+  }
+
+  return 'Exam'
+}
+
+function getAnswerKey(question: QuizQuestion | null, targetKey: string | number | null = null): string {
+  if (!question) {
+    return String(targetKey ?? '')
+  }
+
+  const keyValue = targetKey ?? question.number ?? question.id
+  return `${getQuestionCategory(question)}:${String(keyValue)}`
 }
 
 const answeredCount = computed(() => {
@@ -123,24 +152,28 @@ const currentQuestionLabel = computed(() => {
     return ''
   }
 
+  const prefix = categoryId.value === 'exam' ? `${getCategoryLabel(getQuestionCategory(currentQuestion.value))} ` : ''
+
   if (isMultiAnswerQuestion(currentQuestion.value) && currentQuestion.value.questionNumbers.length > 1) {
     const first = currentQuestion.value.questionNumbers[0]
     const last = currentQuestion.value.questionNumbers[currentQuestion.value.questionNumbers.length - 1]
-    return `${first}-${last}`
+    return `${prefix}${first}-${last}`
   }
 
-  return String(currentQuestion.value.number ?? currentQuestion.value.id)
+  return `${prefix}${String(currentQuestion.value.number ?? currentQuestion.value.id)}`
 })
 
 const questionInstruction = computed(() => {
-  if (categoryId.value === 'choukai') {
+  const questionCategory = getQuestionCategory(currentQuestion.value)
+
+  if (questionCategory === 'choukai') {
     return {
       title: 'Dengarkan audio lalu pilih gambar yang benar',
       description: 'Tiap audio hanya bisa diputar maksimal 2 kali. Kamu boleh langsung menjawab dan lanjut, tetapi peta soal terkunci selama audio aktif.',
     }
   }
 
-  if (categoryId.value === 'bunpou-dokkai') {
+  if (questionCategory === 'bunpou-dokkai') {
     const section = currentQuestion.value?.section
 
     if (section === 'fill-blank') {
@@ -240,11 +273,11 @@ const correctCount = computed(() => {
   return quizDefinition.value?.questions.reduce((sum, question) => {
     if (isMultiAnswerQuestion(question)) {
       return sum + question.questionNumbers.filter((number) => {
-        return answers.value[String(number)] === question.answers?.[String(number)]
+        return answers.value[getAnswerKey(question, number)] === question.answers?.[String(number)]
       }).length
     }
 
-    return sum + (answers.value[String(question.number ?? question.id)] === question.answer ? 1 : 0)
+    return sum + (answers.value[getAnswerKey(question)] === question.answer ? 1 : 0)
   }, 0) ?? 0
 })
 
@@ -264,15 +297,15 @@ const incorrectQuestionSummaries = computed(() => {
   return quizDefinition.value.questions.flatMap((question) => {
     if (isMultiAnswerQuestion(question)) {
       return question.questionNumbers
-        .filter((number) => answers.value[String(number)] !== question.answers?.[String(number)])
+        .filter((number) => answers.value[getAnswerKey(question, number)] !== question.answers?.[String(number)])
         .map((number) => ({
-          key: `${question.id}-${number}`,
-          label: `Soal ${number}`,
-          userAnswer: answers.value[String(number)] ?? null,
+          key: `${String(question.id)}-${number}`,
+          label: categoryId.value === 'exam' ? `${getCategoryLabel(getQuestionCategory(question))} ${number}` : `Soal ${number}`,
+          userAnswer: answers.value[getAnswerKey(question, number)] ?? null,
         }))
     }
 
-    const questionKey = String(question.number ?? question.id)
+    const questionKey = getAnswerKey(question)
     if (answers.value[questionKey] === question.answer) {
       return []
     }
@@ -280,7 +313,9 @@ const incorrectQuestionSummaries = computed(() => {
     return [
       {
         key: String(question.id),
-        label: `Soal ${question.number ?? question.id}`,
+        label: categoryId.value === 'exam'
+          ? `${getCategoryLabel(getQuestionCategory(question))} ${question.number ?? question.id}`
+          : `Soal ${question.number ?? question.id}`,
         userAnswer: answers.value[questionKey] ?? null,
       },
     ]
@@ -288,7 +323,13 @@ const incorrectQuestionSummaries = computed(() => {
 })
 
 const remainingIntroPlays = computed(() => Math.max(0, 2 - introPlayCount.value))
-const currentQuestionAudioKey = computed(() => String(currentQuestion.value?.number ?? currentQuestion.value?.id ?? ''))
+const currentQuestionAudioKey = computed(() => {
+  if (!currentQuestion.value) {
+    return ''
+  }
+
+  return getAnswerKey(currentQuestion.value)
+})
 const currentQuestionAudioPlays = computed(() => {
   if (!currentQuestionAudioKey.value) {
     return 0
@@ -297,7 +338,7 @@ const currentQuestionAudioPlays = computed(() => {
   return questionAudioPlayCount.value[currentQuestionAudioKey.value] ?? 0
 })
 const remainingQuestionAudioPlays = computed(() => Math.max(0, 2 - currentQuestionAudioPlays.value))
-const isQuestionMapLocked = computed(() => categoryId.value === 'choukai' && activeQuestionAudioKey.value != null)
+const isQuestionMapLocked = computed(() => getQuestionCategory(currentQuestion.value) === 'choukai' && activeQuestionAudioKey.value != null)
 const formattedRemainingTime = computed(() => {
   const minutes = Math.floor(remainingSeconds.value / 60)
   const seconds = remainingSeconds.value % 60
@@ -320,7 +361,7 @@ function chooseAnswer(choiceNumber: number, targetKey: string | number | null = 
     return
   }
 
-  const answerKey = String(targetKey ?? currentQuestion.value.number ?? currentQuestion.value.id)
+  const answerKey = getAnswerKey(currentQuestion.value, targetKey)
 
   answers.value = {
     ...answers.value,
@@ -745,7 +786,7 @@ onBeforeRouteLeave(() => {
               class="quiz-choice"
               :class="{ 'quiz-choice--selected': answers[currentQuestionKeyList[0]] === index + 1 }"
               type="button"
-              @click="chooseAnswer(index + 1, currentQuestionKeyList[0])"
+              @click="chooseAnswer(index + 1)"
             >
               <span class="quiz-choice__number">{{ index + 1 }}</span>
               <span class="quiz-choice__text">{{ choice }}</span>
@@ -762,28 +803,28 @@ onBeforeRouteLeave(() => {
                 <div class="quiz-multi-answer-card__head">
                   <strong>Soal {{ subQuestion.number }}</strong>
                   <span class="small-note">
-                    {{ answers[String(subQuestion.number)] ? `Jawaban ${answers[String(subQuestion.number)]}` : 'Belum dijawab' }}
+                    {{ answers[getAnswerKey(currentQuestion, subQuestion.number)] ? `Jawaban ${answers[getAnswerKey(currentQuestion, subQuestion.number)]}` : 'Belum dijawab' }}
                   </span>
                 </div>
 
                 <div class="quiz-audio-panel" style="margin-top: 14px;">
                   <audio
-                    :ref="(element) => setQuestionAudioRef(String(subQuestion.number), element as HTMLAudioElement | null)"
+                    :ref="(element) => setQuestionAudioRef(getAnswerKey(currentQuestion, subQuestion.number), element as HTMLAudioElement | null)"
                     :src="subQuestion.audio"
                     preload="auto"
-                    @ended="handleQuestionAudioEnded(String(subQuestion.number))"
-                    @pause="handleQuestionAudioEnded(String(subQuestion.number))"
+                    @ended="handleQuestionAudioEnded(getAnswerKey(currentQuestion, subQuestion.number))"
+                    @pause="handleQuestionAudioEnded(getAnswerKey(currentQuestion, subQuestion.number))"
                   />
                   <button
                     class="btn btn-primary"
                     type="button"
-                    :disabled="activeQuestionAudioKey === String(subQuestion.number) || getRemainingQuestionAudioPlays(String(subQuestion.number)) === 0"
-                    @click="playQuestionAudioByKey(String(subQuestion.number))"
+                    :disabled="activeQuestionAudioKey === getAnswerKey(currentQuestion, subQuestion.number) || getRemainingQuestionAudioPlays(getAnswerKey(currentQuestion, subQuestion.number)) === 0"
+                    @click="playQuestionAudioByKey(getAnswerKey(currentQuestion, subQuestion.number))"
                   >
-                    {{ activeQuestionAudioKey === String(subQuestion.number) ? 'Audio sedang diputar' : `Putar Audio Soal ${subQuestion.number}` }}
+                    {{ activeQuestionAudioKey === getAnswerKey(currentQuestion, subQuestion.number) ? 'Audio sedang diputar' : `Putar Audio Soal ${subQuestion.number}` }}
                   </button>
                   <p class="small-note">
-                    Sisa putar audio soal ini: {{ getRemainingQuestionAudioPlays(String(subQuestion.number)) }} dari 2
+                    Sisa putar audio soal ini: {{ getRemainingQuestionAudioPlays(getAnswerKey(currentQuestion, subQuestion.number)) }} dari 2
                   </p>
                 </div>
 
@@ -804,7 +845,7 @@ onBeforeRouteLeave(() => {
                     v-for="(choice, choiceIndex) in subQuestion.choices ?? ['1', '2', '3', '4']"
                     :key="`${subQuestion.number}-${choiceIndex}`"
                     class="quiz-choice"
-                    :class="{ 'quiz-choice--selected': answers[String(subQuestion.number)] === choiceIndex + 1 }"
+                    :class="{ 'quiz-choice--selected': answers[getAnswerKey(currentQuestion, subQuestion.number)] === choiceIndex + 1 }"
                     type="button"
                     @click="chooseAnswer(choiceIndex + 1, subQuestion.number)"
                   >
@@ -824,7 +865,7 @@ onBeforeRouteLeave(() => {
               <div class="quiz-multi-answer-card__head">
                 <strong>Soal {{ questionNumber }}</strong>
                 <span class="small-note">
-                  {{ answers[String(questionNumber)] ? `Jawaban ${answers[String(questionNumber)]}` : 'Belum dijawab' }}
+                  {{ answers[getAnswerKey(currentQuestion, questionNumber)] ? `Jawaban ${answers[getAnswerKey(currentQuestion, questionNumber)]}` : 'Belum dijawab' }}
                 </span>
               </div>
 
@@ -833,7 +874,7 @@ onBeforeRouteLeave(() => {
                   v-for="choiceNumber in 4"
                   :key="`${questionNumber}-${choiceNumber}`"
                   class="quiz-micro-choice"
-                  :class="{ 'quiz-micro-choice--selected': answers[String(questionNumber)] === choiceNumber }"
+                  :class="{ 'quiz-micro-choice--selected': answers[getAnswerKey(currentQuestion, questionNumber)] === choiceNumber }"
                   type="button"
                   @click="chooseAnswer(choiceNumber, questionNumber)"
                 >
