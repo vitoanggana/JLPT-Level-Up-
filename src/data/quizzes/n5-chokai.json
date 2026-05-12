@@ -141,5 +141,126 @@
     "audio": "/questions/n5-chokai/q01-q13/q13.mp3",
     "choices": ["Pilihan 1", "Pilihan 2", "Pilihan 3", "Pilihan 4"],
     "answer": 4
+  },
+  {
+    "id": "q14",
+    "number": 14,
+    "section": "choukai-mondai-3",
+    "type": "image",
+    "prompt": "Lihat gambar sambil dengarkan audio, lalu pilih kata-kata yang diucapkan oleh orang yang ditunjuk panah.",
+    "image": "/questions/n5-chokai/q14-q18/q14.PNG",
+    "audio": "/questions/n5-chokai/q14-q18/q14.mp3",
+    "choices": ["Pilihan 1", "Pilihan 2", "Pilihan 3", "Pilihan 4"],
+    "answer": 1
+  },
+  {
+    "id": "q15",
+    "number": 15,
+    "section": "choukai-mondai-3",
+    "type": "image",
+    "prompt": "Lihat gambar sambil dengarkan audio, lalu pilih kata-kata yang diucapkan oleh orang yang ditunjuk panah.",
+    "image": "/questions/n5-chokai/q14-q18/q15.PNG",
+    "audio": "/questions/n5-chokai/q14-q18/q15.mp3",
+    "choices": ["Pilihan 1", "Pilihan 2", "Pilihan 3", "Pilihan 4"],
+    "answer": 1
+  },
+  {
+    "id": "q16",
+    "number": 16,
+    "section": "choukai-mondai-3",
+    "type": "image",
+    "prompt": "Lihat gambar sambil dengarkan audio, lalu pilih kata-kata yang diucapkan oleh orang yang ditunjuk panah.",
+    "image": "/questions/n5-chokai/q14-q18/q16.PNG",
+    "audio": "/questions/n5-chokai/q14-q18/q16.mp3",
+    "choices": ["Pilihan 1", "Pilihan 2", "Pilihan 3", "Pilihan 4"],
+    "answer": 2
+  },
+  {
+    "id": "q17",
+    "number": 17,
+    "section": "choukai-mondai-3",
+    "type": "image",
+    "prompt": "Lihat gambar sambil dengarkan audio, lalu pilih kata-kata yang diucapkan oleh orang yang ditunjuk panah.",
+    "image": "/questions/n5-chokai/q14-q18/q17.PNG",
+    "audio": "/questions/n5-chokai/q14-q18/q17.mp3",
+    "choices": ["Pilihan 1", "Pilihan 2", "Pilihan 3", "Pilihan 4"],
+    "answer": 3
+  },
+  {
+    "id": "q18",
+    "number": 18,
+    "section": "choukai-mondai-3",
+    "type": "image",
+    "prompt": "Lihat gambar sambil dengarkan audio, lalu pilih kata-kata yang diucapkan oleh orang yang ditunjuk panah.",
+    "image": "/questions/n5-chokai/q14-q18/q18.PNG",
+    "audio": "/questions/n5-chokai/q14-q18/q18.mp3",
+    "choices": ["Pilihan 1", "Pilihan 2", "Pilihan 3", "Pilihan 4"],
+    "answer": 1
+  },
+  {
+    "id": "q19",
+    "number": 19,
+    "section": "choukai-mondai-4",
+    "type": "text",
+    "prompt": "Dengarkan audio, lalu pilih jawaban 1, 2, atau 3 yang paling sesuai.",
+    "question": "Mondai 4 tidak memakai gambar. Fokus pada audio lalu pilih salah satu dari tiga jawaban.",
+    "audio": "/questions/n5-chokai/q19-q24/q19.mp3",
+    "choices": ["Pilihan 1", "Pilihan 2", "Pilihan 3"],
+    "answer": 2
+  },
+  {
+    "id": "q20",
+    "number": 20,
+    "section": "choukai-mondai-4",
+    "type": "text",
+    "prompt": "Dengarkan audio, lalu pilih jawaban 1, 2, atau 3 yang paling sesuai.",
+    "question": "Mondai 4 tidak memakai gambar. Fokus pada audio lalu pilih salah satu dari tiga jawaban.",
+    "audio": "/questions/n5-chokai/q19-q24/q20.mp3",
+    "choices": ["Pilihan 1", "Pilihan 2", "Pilihan 3"],
+    "answer": 3
+  },
+  {
+    "id": "q21",
+    "number": 21,
+    "section": "choukai-mondai-4",
+    "type": "text",
+    "prompt": "Dengarkan audio, lalu pilih jawaban 1, 2, atau 3 yang paling sesuai.",
+    "question": "Mondai 4 tidak memakai gambar. Fokus pada audio lalu pilih salah satu dari tiga jawaban.",
+    "audio": "/questions/n5-chokai/q19-q24/q21.mp3",
+    "choices": ["Pilihan 1", "Pilihan 2", "Pilihan 3"],
+    "answer": 3
+  },
+  {
+    "id": "q22",
+    "number": 22,
+    "section": "choukai-mondai-4",
+    "type": "text",
+    "prompt": "Dengarkan audio, lalu pilih jawaban 1, 2, atau 3 yang paling sesuai.",
+    "question": "Mondai 4 tidak memakai gambar. Fokus pada audio lalu pilih salah satu dari tiga jawaban.",
+    "audio": "/questions/n5-chokai/q19-q24/q22.mp3",
+    "choices": ["Pilihan 1", "Pilihan 2", "Pilihan 3"],
+    "answer": 2
+  },
+  {
+    "id": "q23",
+    "number": 23,
+    "section": "choukai-mondai-4",
+    "type": "text",
+    "prompt": "Dengarkan audio, lalu pilih jawaban 1, 2, atau 3 yang paling sesuai.",
+    "question": "Mondai 4 tidak memakai gambar. Fokus pada audio lalu pilih salah satu dari tiga jawaban.",
+    "audio": "/questions/n5-chokai/q19-q24/q23.mp3",
+    "choices": ["Pilihan 1", "Pilihan 2", "Pilihan 3"],
+    "answer": 1
+  },
+  {
+    "id": "q24",
+    "number": 24,
+    "section": "choukai-mondai-4",
+    "type": "text",
+    "prompt": "Dengarkan audio, lalu pilih jawaban 1, 2, atau 3 yang paling sesuai.",
+    "question": "Mondai 4 tidak memakai gambar. Fokus pada audio lalu pilih salah satu dari tiga jawaban.",
+    "audio": "/questions/n5-chokai/q19-q24/q24.mp3",
+    "choices": ["Pilihan 1", "Pilihan 2", "Pilihan 3"],
+    "answer": 3
   }
 ]

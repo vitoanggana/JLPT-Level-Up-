@@ -28,6 +28,19 @@ function shuffle<T>(array: T[]): T[] {
   return clone
 }
 
+function renumberQuestion(question: QuizQuestion, number: number): QuizQuestion {
+  return {
+    ...question,
+    number,
+  }
+}
+
+function buildRandomBlock(questions: QuizQuestion[], startNumber: number, takeCount: number): QuizQuestion[] {
+  return shuffle(questions)
+    .slice(0, takeCount)
+    .map((question, index) => renumberQuestion(question, startNumber + index))
+}
+
 export function getQuizDefinition(levelId: LevelId, categoryId: CategoryId): QuizDefinition | null {
   if (levelId === 'n5' && categoryId === 'moji-goi') {
     return {
@@ -52,11 +65,19 @@ export function getQuizDefinition(levelId: LevelId, categoryId: CategoryId): Qui
   }
 
   if (levelId === 'n5' && categoryId === 'choukai') {
+    const mondaiOneAndTwoPool = n5ChoukaiQuestions.filter((question) => question.section === 'choukai-basic')
+    const mondaiThreePool = n5ChoukaiQuestions.filter((question) => question.section === 'choukai-mondai-3')
+    const mondaiFourPool = n5ChoukaiQuestions.filter((question) => question.section === 'choukai-mondai-4')
+
     return {
       title: 'N5 Choukai',
-      subtitle: '10 soal acak. tiap audio hanya bisa diputar maksimal 2 kali.',
-      questionCount: 10,
-      questions: shuffle(n5ChoukaiQuestions).slice(0, 10),
+      subtitle: '20 soal per blok. Random hanya di dalam tiap mondai, dan tiap audio hanya bisa diputar maksimal 2 kali.',
+      questionCount: 20,
+      questions: [
+        ...buildRandomBlock(mondaiOneAndTwoPool, 1, 10),
+        ...buildRandomBlock(mondaiThreePool, 11, 5),
+        ...buildRandomBlock(mondaiFourPool, 16, 5),
+      ],
       introExample: n5ChoukaiIntroExample,
     }
   }

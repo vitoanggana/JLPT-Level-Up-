@@ -134,6 +134,20 @@ const currentQuestionLabel = computed(() => {
 
 const questionInstruction = computed(() => {
   if (categoryId.value === 'choukai') {
+    if (currentQuestion.value?.section === 'choukai-mondai-3') {
+      return {
+        title: 'Lihat gambar sambil dengarkan audio',
+        description: 'Fokus pada orang yang ditunjuk panah, lalu pilih kata-kata yang diucapkan orang tersebut. Audio tetap maksimal 2 kali.',
+      }
+    }
+
+    if (currentQuestion.value?.section === 'choukai-mondai-4') {
+      return {
+        title: 'Dengarkan audio lalu pilih 1, 2, atau 3',
+        description: 'Bagian ini tidak memakai gambar. Dengarkan baik-baik lalu pilih satu dari tiga jawaban yang tersedia.',
+      }
+    }
+
     return {
       title: 'Dengarkan audio lalu pilih gambar yang benar',
       description: 'Tiap audio hanya bisa diputar maksimal 2 kali. Kamu boleh langsung menjawab dan lanjut, tetapi peta soal terkunci selama audio aktif.',
