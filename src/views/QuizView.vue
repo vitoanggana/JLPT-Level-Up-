@@ -256,6 +256,37 @@ const scorePercent = computed(() => {
   return Math.round((correctCount.value / totalQuestions.value) * 100)
 })
 
+const incorrectQuestionSummaries = computed(() => {
+  if (!quizDefinition.value) {
+    return []
+  }
+
+  return quizDefinition.value.questions.flatMap((question) => {
+    if (isMultiAnswerQuestion(question)) {
+      return question.questionNumbers
+        .filter((number) => answers.value[String(number)] !== question.answers?.[String(number)])
+        .map((number) => ({
+          key: `${question.id}-${number}`,
+          label: `Soal ${number}`,
+          userAnswer: answers.value[String(number)] ?? null,
+        }))
+    }
+
+    const questionKey = String(question.number ?? question.id)
+    if (answers.value[questionKey] === question.answer) {
+      return []
+    }
+
+    return [
+      {
+        key: String(question.id),
+        label: `Soal ${question.number ?? question.id}`,
+        userAnswer: answers.value[questionKey] ?? null,
+      },
+    ]
+  })
+})
+
 const remainingIntroPlays = computed(() => Math.max(0, 2 - introPlayCount.value))
 const currentQuestionAudioKey = computed(() => String(currentQuestion.value?.number ?? currentQuestion.value?.id ?? ''))
 const currentQuestionAudioPlays = computed(() => {
@@ -889,6 +920,26 @@ onBeforeRouteLeave(() => {
           <div class="stat-card">
             Status
             <strong>{{ passedQuiz ? 'Lulus' : 'Ulangi' }}</strong>
+          </div>
+        </div>
+
+        <div v-if="incorrectQuestionSummaries.length" class="quiz-review-card">
+          <p class="quiz-review-card__title">Soal yang perlu dicek lagi</p>
+          <p class="small-note">
+            Berikut nomor soal yang masih salah. Kunci jawaban sengaja tidak ditampilkan supaya bisa kamu audit sendiri bila ada yang terasa janggal.
+          </p>
+
+          <div class="quiz-review-list">
+            <div
+              v-for="item in incorrectQuestionSummaries"
+              :key="item.key"
+              class="quiz-review-item"
+            >
+              <strong>{{ item.label }}</strong>
+              <span class="small-note">
+                {{ item.userAnswer ? `Jawabanmu: ${item.userAnswer}` : 'Belum ada jawaban terekam' }}
+              </span>
+            </div>
           </div>
         </div>
 

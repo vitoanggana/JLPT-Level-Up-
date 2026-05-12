@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import AppShell from '../components/AppShell.vue'
-import { jlptLevels } from '../data/levels'
 </script>
 
 <template>
@@ -47,33 +46,11 @@ import { jlptLevels } from '../data/levels'
             <h2 class="hero-visual__title">Peta Level Jepang</h2>
             <p class="small-note hero-visual__note">Mulai dari N5 lalu buka rute sampai N1.</p>
 
-            <svg
+            <img
               class="hero-japan-map"
-              viewBox="0 0 1040 640"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              aria-label="Mini peta Jepang"
-            >
-              <g
-                v-for="island in jlptLevels"
-                :key="island.id"
-                class="hero-map-region"
-                :transform="`translate(${island.mapRegion.translateX || 0} ${island.mapRegion.translateY || 0})`"
-              >
-                <path
-                  class="hero-map-region__shape"
-                  :d="island.mapRegion.path"
-                  :fill="island.themeColor"
-                />
-                <text
-                  class="hero-map-region__label"
-                  :x="island.mapRegion.labelX"
-                  :y="island.mapRegion.labelY"
-                >
-                  {{ island.label }}
-                </text>
-              </g>
-            </svg>
+              src="/island/full.png"
+              alt="Peta level Jepang dari N5 sampai N1"
+            />
 
             <div class="hero-route-badges">
               <span class="badge">5 pulau</span>
