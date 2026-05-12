@@ -48,7 +48,7 @@ function handleLogin(): void {
           <div class="form-stack">
             <label class="field">
               <span>ID</span>
-              <input v-model="loginId" type="text" placeholder="admin atau user" />
+              <input v-model="loginId" type="text" placeholder="user" />
             </label>
 
             <label class="field">
