@@ -1866,3 +1866,72 @@ input {
     bottom: 14px;
   }
 }
+
+/* --- TWEAK UNTUK MOBILE --- */
+@media screen and (max-width: 768px) {
+  /* Ubah grid yang tadinya bersebelahan menjadi atas-bawah */
+  .app-grid {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  /* Buat konten utama jadi full width dan ke tengah */
+  .content {
+    width: 100%;
+    padding: 1rem;
+    box-sizing: border-box;
+    margin: 0 auto;
+    /* Tambah margin bawah agar tidak tertutup navbar */
+    padding-bottom: 80px; 
+  }
+
+  /* Ubah sidebar menjadi navigasi di bawah layar (Bottom Nav) */
+  .sidebar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: auto;
+    flex-direction: row;
+    justify-content: center;
+    padding: 10px;
+    background-color: var(--bg-color, #ffffff); /* Sesuaikan warna backgroundmu */
+    border-top: 1px solid #e0e0e0;
+    z-index: 100;
+  }
+
+  /* Bikin menu navigasi berjejer ke samping */
+  .sidebar__nav {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    justify-content: center;
+    width: 100%;
+  }
+
+  /* Sembunyikan elemen logo dan akun di mobile agar tidak sempit */
+  .sidebar__brand, 
+  .sidebar__account {
+    display: none;
+  }
+
+  /* Tweak untuk halaman Login dan Landing agar tidak meluber */
+  .auth-card,
+  .hero-copy__panel {
+    width: 100%;
+    max-width: 100%;
+    padding: 1.5rem;
+    box-sizing: border-box;
+  }
+
+  .hero-copy__actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .btn {
+    width: 100%;
+    text-align: center;
+  }
+}
