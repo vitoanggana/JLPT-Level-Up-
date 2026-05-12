@@ -39,7 +39,7 @@ function handleLogin(): void {
             <p class="eyebrow">tes tes, kamu jeleg wle</p>
             <h1 class="title">Mock login sementara</h1>
             <p class="subtitle">
-              masih belum pake db sendiri ya
+              db nya masih lokal jdi login nya pake yang dibawah itu, have fun!
             </p>
           </div>
         </div>

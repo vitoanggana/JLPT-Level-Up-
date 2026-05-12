@@ -9,3 +9,4 @@ jpn.traineddata
 # OS / editor noise
 .DS_Store
 Thumbs.db
+vite-dev.log
