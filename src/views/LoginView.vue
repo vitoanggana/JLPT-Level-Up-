@@ -36,10 +36,10 @@ function handleLogin(): void {
       <div class="auth-stack">
         <div class="section-head auth-head">
           <div>
-            <p class="eyebrow">Minggu 1</p>
+            <p class="eyebrow">tes tes, kamu jeleg wle</p>
             <h1 class="title">Mock login sementara</h1>
             <p class="subtitle">
-              Sementara ini autentikasi memakai database mock lokal. Nanti gampang diganti ke Supabase atau backend sendiri.
+              masih belum pake db sendiri ya
             </p>
           </div>
         </div>
@@ -64,7 +64,7 @@ function handleLogin(): void {
             </div>
 
             <div class="auth-seed-list">
-              <div><strong>Admin</strong>: id `admin` / pw `admin`</div>
+              <!-- <div><strong>Admin</strong>: id `admin` / pw `admin`</div> -->
               <div><strong>User</strong>: id `user` / pw `user`</div>
             </div>
           </div>
