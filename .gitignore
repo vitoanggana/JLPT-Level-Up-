@@ -10,3 +10,10 @@ jpn.traineddata
 .DS_Store
 Thumbs.db
 vite-dev.log
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
+.env*
+!.env.example
