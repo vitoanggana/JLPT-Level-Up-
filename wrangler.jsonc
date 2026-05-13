@@ -1,7 +1,14 @@
 {
-  "name": "jlpt-level-up",
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "jlpt",
   "compatibility_date": "2026-05-13",
+  "observability": {
+    "enabled": true
+  },
   "assets": {
-    "directory": "./dist"
-  }
+    "not_found_handling": "single-page-application"
+  },
+  "compatibility_flags": [
+    "nodejs_compat"
+  ]
 }
