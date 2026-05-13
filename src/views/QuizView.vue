@@ -736,7 +736,7 @@ onBeforeRouteLeave(() => {
             <p class="quiz-instruction-card__text">{{ questionInstruction.description }}</p>
           </div>
 
-          <div class="quiz-gif-showcase">
+          <div class="quiz-gif-showcase gif-mobile">
             <img src="/gifs/subway.gif" alt="Animasi" class="quiz-gif-image" />
           </div>
 
@@ -940,6 +940,9 @@ onBeforeRouteLeave(() => {
             <div>Soal yang dinilai: {{ totalQuestions }}</div>
             <div>Level: {{ levelId.toUpperCase() }}</div>
             <div v-if="isQuestionMapLocked">Tunggu audio selesai sebelum pindah lewat peta soal.</div>
+          </div>
+          <div class="quiz-gif-showcase gif-desktop" style="margin-top: 24px;">
+            <img src="/gifs/subway.gif" alt="Animasi" class="quiz-gif-image" />
           </div>
         </aside>
       </div>
