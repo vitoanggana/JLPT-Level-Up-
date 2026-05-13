@@ -1868,23 +1868,20 @@ input {
 }
 
 @media screen and (max-width: 768px) {
-  /* Ubah grid yang tadinya bersebelahan menjadi atas-bawah */
   .app-grid {
     display: flex;
     flex-direction: column;
     width: 100%;
   }
 
-  /* Buat konten utama jadi full width dan ke tengah */
   .content {
     width: 100%;
     padding: 1rem;
     box-sizing: border-box;
     margin: 0 auto;
-    /* Tambah margin bawah agar tidak tertutup navbar */
+ 
     padding-bottom: 80px; 
   }
-
 
   .sidebar {
     position: fixed;
@@ -1899,8 +1896,7 @@ input {
     border-top: 1px solid #e0e0e0;
     z-index: 100;
   }
-
-  /* Bikin menu navigasi berjejer ke samping */
+ 
   .sidebar__nav {
     display: flex;
     flex-direction: row;
@@ -1909,7 +1905,6 @@ input {
     flex: 1;
   }
 
-  /* Sembunyikan elemen logo dan akun di mobile agar tidak sempit */
   .sidebar__brand, 
   .sidebar__account {
     display: flex; 
@@ -1945,5 +1940,32 @@ input {
   .btn {
     width: 100%;
     text-align: center;
+  }
+
+  .quiz-question-card__media-stack {
+    width: calc(100vw - 16px);
+    margin-left: calc(50% - 50vw + 8px);
+    background-color: #ffffff;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    padding: 8px;
+    box-sizing: border-box;
+  }
+
+  .quiz-question-card__image-wrap {
+    border: none;
+    padding: 0;
+    margin: 0;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .quiz-question-card__image {
+    width: 100%;
+    height: auto;
+    max-height: none;
+    object-fit: contain;
+    display: block;
   }
 }

@@ -12,7 +12,7 @@ const seededUsers: AuthUser[] = [
     name: 'Admin JLPT',
     loginId: 'admin',
     email: 'admin@jlpt.quest',
-    password: 'admin',
+    password: 'admin156156',
     role: 'admin',
   },
   {

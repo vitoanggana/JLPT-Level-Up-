@@ -110,19 +110,19 @@ const pendingCategory = computed(() => {
 
 const pendingDurationMinutes = computed(() => {
   if (pendingCategoryId.value === 'moji-goi') {
-    return 30
+    return 20
   }
 
   if (pendingCategoryId.value === 'bunpou-dokkai') {
-    return 45
+    return 35
   }
 
   if (pendingCategoryId.value === 'choukai') {
-    return 60
+    return 25
   }
 
   if (pendingCategoryId.value === 'exam') {
-    return 60
+    return 40
   }
 
   return 0
