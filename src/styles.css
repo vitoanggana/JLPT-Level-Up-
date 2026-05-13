@@ -634,6 +634,17 @@ input {
   border-color: rgba(23, 49, 62, 0.12);
 }
 
+.btn-danger {
+  color: #d95252 !important;
+  border-color: rgba(217, 82, 82, 0.3) !important;
+  background: rgba(217, 82, 82, 0.05) !important;
+}
+
+.btn-danger:hover {
+  background: rgba(217, 82, 82, 0.1) !important;
+  border-color: rgba(217, 82, 82, 0.5) !important;
+}
+
 .map-level-strip {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
@@ -1999,5 +2010,5 @@ input {
     min-height: 40px;
     font-size: 14px;
   }
-  
+
 }
