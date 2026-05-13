@@ -736,6 +736,10 @@ onBeforeRouteLeave(() => {
             <p class="quiz-instruction-card__text">{{ questionInstruction.description }}</p>
           </div>
 
+          <div class="quiz-gif-showcase">
+            <img src="/gifs/subway.gif" alt="Animasi" class="quiz-gif-image" />
+          </div>
+
           <div class="quiz-question-card">
             <p class="quiz-question-card__prompt">
               {{ currentQuestion.prompt || 'Baca soal asli pada gambar, lalu pilih jawaban 1, 2, 3, atau 4.' }}
@@ -887,12 +891,6 @@ onBeforeRouteLeave(() => {
           </div>
 
           <div class="button-row" style="margin-top: 24px;">
-            <button class="btn btn-secondary" type="button" @click="exitQuiz">
-              Keluar
-            </button>
-            <button class="btn btn-secondary" type="button" :disabled="currentIndex === 0" @click="goPrevious">
-              Sebelumnya
-            </button>
             <button
               class="btn btn-secondary"
               type="button"
@@ -901,6 +899,9 @@ onBeforeRouteLeave(() => {
             >
               Berikutnya
             </button>
+            <button class="btn btn-secondary" type="button" :disabled="currentIndex === 0" @click="goPrevious">
+              Sebelumnya
+            </button>
             <button
               class="btn btn-primary"
               type="button"
@@ -908,6 +909,9 @@ onBeforeRouteLeave(() => {
               @click="submitQuiz"
             >
               Selesaikan Kuis
+            </button>
+            <button class="btn btn-secondary btn-danger" type="button" @click="exitQuiz">
+              Keluar
             </button>
           </div>
         </div>

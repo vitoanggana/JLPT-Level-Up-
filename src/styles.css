@@ -1878,6 +1878,23 @@ input {
   }
 }
 
+.quiz-gif-showcase {
+  margin-top: 20px;
+  text-align: center;
+  background: white;
+  padding: 12px;
+  border-radius: 20px;
+  border: 1px solid var(--line);
+}
+
+.quiz-gif-image {
+  max-width: 100%;
+  height: auto;
+  border-radius: 12px;
+  display: block;
+  margin: 0 auto;
+}
+
 @media screen and (max-width: 768px) {
   .app-grid {
     display: flex;
