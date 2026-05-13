@@ -2014,20 +2014,24 @@ input {
   }
 
   .quiz-question-card__media-stack {
-    width: auto;
-    margin: 0 -22px;
+    width: calc(100vw - 32px);
+    margin-left: calc(50% - 50vw + 16px);
     background-color: #ffffff;
-    border-top: 1px solid #d1d5db;
-    border-bottom: 1px solid #d1d5db;
-    padding: 10px 0;
+    padding: 12px;
     box-sizing: border-box;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    box-shadow: 0 16px 32px rgba(23, 49, 62, 0.15), 0 -6px 16px rgba(23, 49, 62, 0.05);
+    position: relative;
+    z-index: 10;
   }
 
   .quiz-question-card__image-wrap {
     border: none;
     padding: 0;
     margin: 0;
-    border-radius: 0;
+    border-radius: 8px;
+    overflow: hidden;
   }
 
   .quiz-question-card__image {
