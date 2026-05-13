@@ -63,19 +63,19 @@ const passingCorrect = computed(() => {
 const passedQuiz = computed(() => correctCount.value >= passingCorrect.value)
 const quizDurationSeconds = computed(() => {
   if (categoryId.value === 'moji-goi') {
-    return 30 * 60
+    return 20 * 60
   }
 
   if (categoryId.value === 'bunpou-dokkai') {
-    return 45 * 60
+    return 35 * 60
   }
 
   if (categoryId.value === 'choukai') {
-    return 60 * 60
+    return 25 * 60
   }
 
   if (categoryId.value === 'exam') {
-    return 60 * 60
+    return 40 * 60
   }
 
   return 0
