@@ -2015,9 +2015,9 @@ input {
 
   .quiz-question-card__media-stack {
     width: auto;
-    margin: 0 -34px;
+    margin: 0 -40px;
     background-color: #ffffff;
-    padding: 6px;
+    padding: 2px;
     box-sizing: border-box;
     border: 1px solid var(--line);
     border-radius: 14px;
