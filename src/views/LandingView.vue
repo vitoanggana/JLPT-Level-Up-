@@ -9,13 +9,14 @@ import AppShell from '../components/AppShell.vue'
         <div class="hero-copy">
           <div class="hero-copy__panel">
             <p class="eyebrow">JLPT Adventure</p>
-            <h1 class="title">Naik level bahasa Jepang lewat petualangan pulau.</h1>
+            <h1 class="title">Naik level bahasa Jepang lewat petualangan pulau. Dan bergelut bersama teman kamu yang sok jago jepang itu!</h1>
             <p class="subtitle">
               Jadi barudak ini website teh sangat bagus intinya mah support saya terus jangan israel.
             </p>
 
             <div class="button-row hero-copy__actions">
               <RouterLink class="btn btn-primary" to="/map">Masuk ke Peta</RouterLink>
+              <RouterLink class="btn btn-primary" to="/pvp">By One JLPT!</RouterLink>
               <RouterLink class="btn btn-secondary" to="/login">Buka Login</RouterLink>
             </div>
           </div>

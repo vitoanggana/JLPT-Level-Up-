@@ -64,7 +64,7 @@ function createN5ChoukaiFullSet(): QuizQuestion[] {
   return [...firstBlock, ...secondBlock, ...thirdBlock]
 }
 
-function createN5ExamQuestions(): QuizQuestion[] {
+export function createN5ExamQuestions(): QuizQuestion[] {
   const mojiQuestions = shuffle(n5MojiGoiQuestions).slice(0, 10)
 
   const bunpouGrammarQuestions = sortQuestionsByNumber(

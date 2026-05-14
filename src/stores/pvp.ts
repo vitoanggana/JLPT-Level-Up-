@@ -2,11 +2,35 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { supabase } from '../lib/supabase'
 import { useAuthStore } from './auth'
+import { createN5ExamQuestions } from '../data/quizzes'
+import { computed } from 'vue'
+
+
 
 export const usePvpStore = defineStore('pvp', () => {
   const authStore = useAuthStore()
   const currentRoom = ref<any>(null)
   const players = ref<any[]>([])
+
+  const currentQuestion = computed(() => {
+  if (!currentRoom.value) return null
+
+  console.log(
+    'ROOM QUESTIONS:',
+    currentRoom.value.questions
+  )
+
+  console.log(
+    'CURRENT INDEX:',
+    currentRoom.value.current_question_index
+  )
+
+  const index =
+    currentRoom.value.current_question_index || 0
+
+  return currentRoom.value.questions?.[index]
+})
+
   let playersChannel: any = null
   let roomChannel: any = null
 
@@ -14,8 +38,7 @@ export const usePvpStore = defineStore('pvp', () => {
   const createRoom = async (playerName: string) => {
     const inviteCode = Math.random().toString(36).substring(2, 8).toUpperCase()
     
-    // Ambil 10 soal acak (nantinya bisa dibuat lebih dinamis)
-    const randomQuestions = ['n5-bunpou-q1', 'n5-moji-q5', 'n5-chokai-q3'] 
+    const randomQuestions = createN5ExamQuestions()
 
     const { data: room, error } = await supabase
       .from('pvp_rooms')
@@ -158,7 +181,6 @@ export const usePvpStore = defineStore('pvp', () => {
 }
   const attackOpponent = async (damage: number = 20) => {
     if (!currentRoom.value) return
-
     // Cari player mana yang BUKAN kita (si lawan)
     const opponent = players.value.find(p => p.user_id !== authStore.currentUser?.id)
     
@@ -171,11 +193,96 @@ export const usePvpStore = defineStore('pvp', () => {
     }
   }
 
+  const submitAnswer = async (
+  selectedChoice: number
+) => {
+  if (!currentRoom.value || !currentQuestion.value)
+    return
+
+  if (currentRoom.value.question_resolved)
+    return
+
+  const correctAnswer =
+    currentQuestion.value.answer
+
+  // Kalau salah
+  if (selectedChoice !== correctAnswer)
+    return
+
+  // lock question
+  const { data: updatedRoom } =
+    await supabase
+      .from('pvp_rooms')
+      .update({
+        question_resolved: true
+      })
+      .eq('id', currentRoom.value.id)
+      .eq('question_resolved', false)
+      .select()
+      .maybeSingle()
+
+  // kalah race
+  if (!updatedRoom) return
+
+  const opponent = players.value.find(
+    p =>
+      p.user_id !== authStore.currentUser?.id
+  )
+
+  if (!opponent) return
+
+  const newHp = Math.max(
+    0,
+    opponent.hp - 20
+  )
+
+  await supabase
+    .from('pvp_players')
+    .update({
+      hp: newHp
+    })
+    .eq('id', opponent.id)
+
+  await supabase
+    .from('pvp_rooms')
+    .update({
+      current_question_index:
+        currentRoom.value.current_question_index + 1,
+
+      question_resolved: false
+    })
+    .eq('id', currentRoom.value.id)
+}
+  const cleanupRealtime = () => {
+  if (playersChannel) {
+    supabase.removeChannel(playersChannel)
+    playersChannel = null
+  }
+
+  if (roomChannel) {
+    supabase.removeChannel(roomChannel)
+    roomChannel = null
+  }
+}
+
+const leaveRoom = () => {
+  cleanupRealtime()
+
+  currentRoom.value = null
+  players.value = []
+}
+
+
   return {
     currentRoom,
     players,
+    currentQuestion,
+
     createRoom,
     joinRoom,
-    attackOpponent
+    attackOpponent,
+    leaveRoom,
+    submitAnswer,
+    cleanupRealtime
   }
 })

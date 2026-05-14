@@ -10,6 +10,7 @@ import NotFoundView from '../views/NotFoundView.vue'
 import { pinia } from '../stores'
 import { useAuthStore } from '../stores/auth'
 import PvPLobbyView from '../views/PvPLobbyView.vue'
+import PvPArenaView from '../views/PvPArenaView.vue'
 
 const routes: RouteRecordRaw[] = [
   { path: '/', name: 'landing', component: LandingView, meta: { public: true } },
@@ -20,7 +21,8 @@ const routes: RouteRecordRaw[] = [
   { path: '/profile', name: 'profile', component: ProfileView },
   
   // Tambahkan rute PvP di sini
-  { path: '/pvp', name: 'pvp', component: PvPLobbyView }, 
+  { path: '/pvp', name: 'pvp', component: PvPLobbyView },
+  { path: '/pvp/arena', name: 'pvp-arena', component: PvPArenaView }, 
 
   { path: '/:pathMatch(.*)*', name: 'not-found', component: NotFoundView },
 ]
