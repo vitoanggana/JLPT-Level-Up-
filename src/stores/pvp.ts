@@ -1,19 +1,18 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { supabase } from '../lib/supabase'
+import { useAuthStore } from './auth'
 
 export const usePvpStore = defineStore('pvp', () => {
+  const authStore = useAuthStore()
   const currentRoom = ref<any>(null)
   const players = ref<any[]>([])
-  let roomSubscription: any = null
-  let playersSubscription: any = null
 
   // Fungsi membuat room (Host)
   const createRoom = async (playerName: string) => {
-    // Generate kode random 6 karakter
     const inviteCode = Math.random().toString(36).substring(2, 8).toUpperCase()
     
-    // (Opsional) Ambil array ID pertanyaan acak dari data N5 kamu
+    // Ambil 10 soal acak (nantinya bisa dibuat lebih dinamis)
     const randomQuestions = ['n5-bunpou-q1', 'n5-moji-q5', 'n5-chokai-q3'] 
 
     const { data: room, error } = await supabase
@@ -25,60 +24,95 @@ export const usePvpStore = defineStore('pvp', () => {
     if (error) throw error
     currentRoom.value = room
     
-    await joinRoom(inviteCode, playerName)
+    // Player yang buat otomatis jadi Host
+    await joinRoom(inviteCode, playerName, true)
   }
 
-  // Fungsi join room (Guest)
-  const joinRoom = async (inviteCode: string, playerName: string) => {
-    // Cari room berdasarkan kode
+  // Fungsi join room (Guest/Host)
+  const joinRoom = async (inviteCode: string, playerName: string, isHost = false) => {
     const { data: room, error: roomError } = await supabase
       .from('pvp_rooms')
       .select('*')
       .eq('invite_code', inviteCode)
       .single()
 
-    if (roomError) throw roomError
+    if (roomError) throw new Error('Room tidak ditemukan!')
     currentRoom.value = room
 
-    // Insert player ke room tersebut
-    const { error: playerError } = await supabase
+    // Cek dulu apakah player sudah masuk (cegah duplikat saat refresh)
+    const { data: existingPlayer } = await supabase
       .from('pvp_players')
-      .insert([{ room_id: room.id, player_name: playerName, hp: 100 }])
-    
-    if (playerError) throw playerError
+      .select('*')
+      .eq('room_id', room.id)
+      .eq('user_id', authStore.currentUser?.id)
+      .single()
 
-    // Mulai dengarkan (listen) perubahan real-time!
+    if (!existingPlayer) {
+      await supabase
+        .from('pvp_players')
+        .insert([{ 
+          room_id: room.id, 
+          user_id: authStore.currentUser?.id,
+          player_name: playerName, 
+          hp: 100,
+          is_host: isHost
+        }])
+    }
+
+    // Ambil semua player yang sudah ada di room
+    fetchPlayers(room.id)
     subscribeToRoomUpdates(room.id)
   }
 
-  // Fungsi mendengarkan WebSocket Realtime
+  const fetchPlayers = async (roomId: string) => {
+    const { data } = await supabase
+      .from('pvp_players')
+      .select('*')
+      .eq('room_id', roomId)
+    if (data) players.value = data
+  }
+
   const subscribeToRoomUpdates = (roomId: string) => {
-    // Listen perubahan pada HP / status pemain
-    playersSubscription = supabase
-      .channel('players_channel')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'pvp_players', filter: `room_id=eq.${roomId}` }, 
-        (payload) => {
-          console.log('Update Player:', payload)
-          // Nanti di sini kita update ref players() agar UI darah Vue bereaksi
-        }
-      )
+    // Realtime Players (Darah, Nama, dll)
+    supabase
+      .channel('players_changes')
+      .on('postgres_changes', { 
+        event: '*', 
+        schema: 'public', 
+        table: 'pvp_players', 
+        filter: `room_id=eq.${roomId}` 
+      }, () => {
+        fetchPlayers(roomId) // Ambil ulang data player tiap ada perubahan
+      })
       .subscribe()
 
-    // Listen perubahan pada status room (misal host klik "Mulai")
-    roomSubscription = supabase
-      .channel('room_channel')
-      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'pvp_rooms', filter: `id=eq.${roomId}` }, 
-        (payload) => {
-          console.log('Update Room:', payload)
-          currentRoom.value = payload.new
-        }
-      )
+    // Realtime Room (Status game Mulai/Selesai)
+    supabase
+      .channel('room_changes')
+      .on('postgres_changes', { 
+        event: 'UPDATE', 
+        schema: 'public', 
+        table: 'pvp_rooms', 
+        filter: `id=eq.${roomId}` 
+      }, (payload) => {
+        currentRoom.value = payload.new
+      })
       .subscribe()
   }
 
-  const reduceOpponentHp = async (opponentId: string, damage: number = 20) => {
-    // Fungsi dipanggil saat kita jawab benar lebih dulu
-    // (Harus ambil HP terakhir lalu kurangi, disederhanakan dulu di sini)
+  const attackOpponent = async (damage: number = 20) => {
+    if (!currentRoom.value) return
+
+    // Cari player mana yang BUKAN kita (si lawan)
+    const opponent = players.value.find(p => p.user_id !== authStore.currentUser?.id)
+    
+    if (opponent) {
+      const newHp = Math.max(0, opponent.hp - damage)
+      await supabase
+        .from('pvp_players')
+        .update({ hp: newHp })
+        .eq('id', opponent.id)
+    }
   }
 
   return {
@@ -86,6 +120,6 @@ export const usePvpStore = defineStore('pvp', () => {
     players,
     createRoom,
     joinRoom,
-    reduceOpponentHp
+    attackOpponent
   }
 })
