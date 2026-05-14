@@ -7,6 +7,8 @@ export const usePvpStore = defineStore('pvp', () => {
   const authStore = useAuthStore()
   const currentRoom = ref<any>(null)
   const players = ref<any[]>([])
+  let playersChannel: any = null
+  let roomChannel: any = null
 
   // Fungsi membuat room (Host)
   const createRoom = async (playerName: string) => {
@@ -19,13 +21,14 @@ export const usePvpStore = defineStore('pvp', () => {
       .from('pvp_rooms')
       .insert([{ invite_code: inviteCode, questions: randomQuestions }])
       .select()
-      .single()
+      .maybeSingle()
 
     if (error) throw error
     currentRoom.value = room
     
     // Player yang buat otomatis jadi Host
     await joinRoom(inviteCode, playerName, true)
+    await fetchPlayers(room.id)
   }
 
   // Fungsi join room (Guest/Host)
@@ -34,9 +37,11 @@ export const usePvpStore = defineStore('pvp', () => {
       .from('pvp_rooms')
       .select('*')
       .eq('invite_code', inviteCode)
-      .single()
+      .maybeSingle()
 
-    if (roomError) throw new Error('Room tidak ditemukan!')
+    if (roomError || !room) {
+  throw new Error('Room tidak ditemukan!')
+        }
     currentRoom.value = room
 
     // Cek dulu apakah player sudah masuk (cegah duplikat saat refresh)
@@ -45,7 +50,7 @@ export const usePvpStore = defineStore('pvp', () => {
       .select('*')
       .eq('room_id', room.id)
       .eq('user_id', authStore.currentUser?.id)
-      .single()
+      .maybeSingle()
 
     if (!existingPlayer) {
       await supabase
@@ -60,46 +65,97 @@ export const usePvpStore = defineStore('pvp', () => {
     }
 
     // Ambil semua player yang sudah ada di room
-    fetchPlayers(room.id)
+    await fetchPlayers(room.id)
     subscribeToRoomUpdates(room.id)
   }
 
   const fetchPlayers = async (roomId: string) => {
-    const { data } = await supabase
-      .from('pvp_players')
-      .select('*')
-      .eq('room_id', roomId)
-    if (data) players.value = data
+  const { data } = await supabase
+    .from('pvp_players')
+    .select('*')
+    .eq('room_id', roomId)
+
+  players.value = data || []
+
+  // Kalau player sudah 2, mulai battle
+  if (
+  players.value.length === 2 &&
+  currentRoom.value &&
+  !currentRoom.value.battle_started
+) {
+  await supabase
+    .from('pvp_rooms')
+    .update({
+      battle_started: true,
+      status: 'playing'
+    })
+    .eq('id', roomId)
+
+  // Fetch ulang room terbaru
+  const { data: updatedRoom } = await supabase
+    .from('pvp_rooms')
+    .select('*')
+    .eq('id', roomId)
+    .maybeSingle()
+
+  if (updatedRoom) {
+    currentRoom.value = updatedRoom
   }
+}
+}
 
   const subscribeToRoomUpdates = (roomId: string) => {
-    // Realtime Players (Darah, Nama, dll)
-    supabase
-      .channel('players_changes')
-      .on('postgres_changes', { 
-        event: '*', 
-        schema: 'public', 
-        table: 'pvp_players', 
-        filter: `room_id=eq.${roomId}` 
-      }, () => {
-        fetchPlayers(roomId) // Ambil ulang data player tiap ada perubahan
-      })
-      .subscribe()
-
-    // Realtime Room (Status game Mulai/Selesai)
-    supabase
-      .channel('room_changes')
-      .on('postgres_changes', { 
-        event: 'UPDATE', 
-        schema: 'public', 
-        table: 'pvp_rooms', 
-        filter: `id=eq.${roomId}` 
-      }, (payload) => {
-        currentRoom.value = payload.new
-      })
-      .subscribe()
+  // Cleanup channel lama
+  if (playersChannel) {
+    supabase.removeChannel(playersChannel)
   }
 
+  if (roomChannel) {
+    supabase.removeChannel(roomChannel)
+  }
+
+  // Players realtime
+  playersChannel = supabase
+    .channel(`players-${roomId}`)
+    .on(
+      'postgres_changes',
+      {
+        event: '*',
+        schema: 'public',
+        table: 'pvp_players',
+        filter: `room_id=eq.${roomId}`
+      },
+      async (payload) => {
+        console.log('PLAYER UPDATE:', payload)
+
+        await fetchPlayers(roomId)
+      }
+    )
+    .subscribe((status) => {
+      console.log(`players-${roomId}:`, status)
+    })
+
+  // Room realtime
+  roomChannel = supabase
+    .channel(`room-${roomId}`)
+    .on(
+      'postgres_changes',
+      {
+        event: 'UPDATE',
+        schema: 'public',
+        table: 'pvp_rooms',
+        filter: `id=eq.${roomId}`
+      },
+      (payload) => {
+        console.log('ROOM UPDATE:', payload)
+
+        currentRoom.value = payload.new
+      }
+    )
+    .subscribe((status) => {
+      console.log(`room-${roomId}:`, status)
+    })
+}
   const attackOpponent = async (damage: number = 20) => {
     if (!currentRoom.value) return
 

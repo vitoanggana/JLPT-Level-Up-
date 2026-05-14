@@ -9,6 +9,7 @@ import ProfileView from '../views/ProfileView.vue'
 import NotFoundView from '../views/NotFoundView.vue'
 import { pinia } from '../stores'
 import { useAuthStore } from '../stores/auth'
+import PvPLobbyView from '../views/PvPLobbyView.vue'
 
 const routes: RouteRecordRaw[] = [
   { path: '/', name: 'landing', component: LandingView, meta: { public: true } },
@@ -17,6 +18,10 @@ const routes: RouteRecordRaw[] = [
   { path: '/island/:levelId', name: 'island', component: IslandView, props: true },
   { path: '/quiz/:levelId/:categoryId', name: 'quiz', component: QuizView, props: true },
   { path: '/profile', name: 'profile', component: ProfileView },
+  
+  // Tambahkan rute PvP di sini
+  { path: '/pvp', name: 'pvp', component: PvPLobbyView }, 
+
   { path: '/:pathMatch(.*)*', name: 'not-found', component: NotFoundView },
 ]
 
