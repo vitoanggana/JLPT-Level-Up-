@@ -11,6 +11,7 @@
     "deploy": "npm run build && wrangler deploy"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.105.4",
     "pdf-parse": "^2.4.5",
     "pinia": "^2.3.1",
     "sharp": "^0.34.5",

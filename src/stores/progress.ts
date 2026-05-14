@@ -1,5 +1,7 @@
 import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
+import { supabase } from '../lib/supabase'
+import { useAuthStore } from './auth'
 
 import { jlptLevels, starterProgress } from '../data/levels'
 import type {
@@ -88,6 +90,7 @@ function loadProgress(): ProgressState {
 
 export const useProgressStore = defineStore('progress', () => {
   const progress = ref<ProgressState>(loadProgress())
+  const authStore = useAuthStore()
 
   const currentLevel = computed(() => {
     return jlptLevels.find((level) => level.id === progress.value.selectedLevel) ?? jlptLevels[0]
@@ -96,8 +99,31 @@ export const useProgressStore = defineStore('progress', () => {
   const totalUnlocked = computed(() => progress.value.unlockedLevels.length)
   const totalCompleted = computed(() => progress.value.completedLevels.length)
 
-  function persist() {
+  async function persist() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(progress.value))
+
+    if (authStore.currentUser) {
+      await supabase.from('user_saves').upsert({
+        user_id: authStore.currentUser.id,
+        save_data: progress.value,
+        updated_at: new Date().toISOString()
+      }, { onConflict: 'user_id' })
+    }
+  }
+
+  async function syncFromCloud() {
+    if (!authStore.currentUser) return
+
+    const { data, error } = await supabase
+      .from('user_saves')
+      .select('save_data')
+      .eq('user_id', authStore.currentUser.id)
+      .single()
+
+    if (!error && data?.save_data) {
+      progress.value = normalizeProgress(data.save_data)
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(progress.value))
+    }
   }
 
   function selectLevel(levelId: LevelId): void {
@@ -203,5 +229,6 @@ export const useProgressStore = defineStore('progress', () => {
     canAccessCategory,
     completeCategory,
     resetProgress,
+    syncFromCloud,
   }
 })
